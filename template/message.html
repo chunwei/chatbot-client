@@ -1,0 +1,728 @@
+<div mm-repeat="message in chatContent" data-height-calc="heightCalc" data-buffer-height="300" data-pre-calc="true" class="ng-scope">
+  <div ng-style="{height:topHeight}" class="top-placeholder ng-scope" style="height: 0px;"></div>
+  <!-- ngRepeat: message in chatContent -->
+  <div ng-repeat="message in chatContent" class="ng-scope">
+    <div class="clearfix" message-directive="">
+      <div ng-switch="" on="message.MsgType" style="overflow: hidden;" ng-init="contact = getUserContact(message.MMActualSender,message.MMPeerUserName);">
+        <!-- 系统消息 -->
+        <!-- ngSwitchWhen: 10000 -->
+        <!-- ngSwitchDefault:  -->
+        <div ng-switch-default="" class="message ng-scope me" ng-class="{&quot;you&quot;:!message.MMIsSend,&quot;me&quot;:message.MMIsSend,&quot;first&quot;:($index==0&amp;&amp;!message.MMTime)}">
+          <!-- ngIf: message.MMTime||(newMsg && newMsg==message) -->
+          <div ng-if="message.MMTime||(newMsg &amp;&amp; newMsg==message)" class="message_system ng-scope">
+            <!-- ngIf: (isScrollToUnread && newMsg==message) -->
+            <!-- ngIf: (message.MMTime&&!(newMsg && newMsg==message)) -->
+            <div ng-if="(message.MMTime&amp;&amp;!(newMsg &amp;&amp; newMsg==message))" class="content ng-binding ng-scope">21:44</div>
+            <!-- end ngIf: (message.MMTime&&!(newMsg && newMsg==message)) -->
+          </div>
+          <!-- end ngIf: message.MMTime||(newMsg && newMsg==message) -->
+
+
+
+          <img class="avatar" src="/cgi-bin/mmwebwx-bin/webwxgeticon?seq=638070060&amp;username=@43c142620a1c4d43c5bbc1c5ad6af634&amp;skey=@crypt_134c2c57_a53228ff81fd88d09bcf358b0e7cef2d" mm-src="/cgi-bin/mmwebwx-bin/webwxgeticon?seq=638070060&amp;username=@43c142620a1c4d43c5bbc1c5ad6af634&amp;skey=@crypt_134c2c57_a53228ff81fd88d09bcf358b0e7cef2d"
+            data-cm="{&quot;type&quot;:&quot;avatar&quot;,&quot;username&quot;:&quot;@43c142620a1c4d43c5bbc1c5ad6af634&quot;,&quot;isFriend&quot;:&quot;true&quot;}" title="lcw" ng-click="showProfile($event,message.MMActualSender)">
+          <div class="content">
+            <!-- ngIf: message.MMIsChatRoom && !message.MMIsSend -->
+            <!-- ngIf: message.MsgType != CONF.MSGTYPE_EMOTICON -->
+            <div class="bubble js_message_bubble ng-scope bubble_primary right no_arrow" ng-if="message.MsgType != CONF.MSGTYPE_EMOTICON" ng-class="{&quot;bubble_default left&quot;:!message.MMIsSend,&quot;bubble_primary right&quot;:message.MMIsSend, &quot;arrow_primary&quot;: message.MsgType == CONF.MSGTYPE_APP &amp;&amp; message.AppMsgType == CONF.APPMSGTYPE_URL, &quot;no_arrow&quot;: message.MsgType == CONF.MSGTYPE_IMAGE || message.MsgType == CONF.MSGTYPE_MICROVIDEO || message.MsgType == CONF.MSGTYPE_VIDEO}"
+              data-cm="{&quot;type&quot;:&quot;message&quot;,&quot;actualSender&quot;:&quot;@43c142620a1c4d43c5bbc1c5ad6af634&quot;,
+                 &quot;msgType&quot;:&quot;3&quot;,&quot;subType&quot;:0,&quot;msgId&quot;:&quot;5997958234320734939&quot;}">
+
+              <!--news消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_TEXT && message.MMPeerUserName == 'newsapp' -->
+
+              <!--红包消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_APP && message.AppMsgType == CONF.APPMSGTYPE_RED_ENVELOPES -->
+              <!--纯文本消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_TEXT && message.SubMsgType != CONF.MSGTYPE_LOCATION -->
+
+              <!-- 地理消息 -->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_TEXT && message.SubMsgType == CONF.MSGTYPE_LOCATION -->
+
+
+
+              <!--图片消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_IMAGE -->
+              <div class="bubble_cont ng-scope" ng-if="message.MsgType == CONF.MSGTYPE_IMAGE">
+                <div class="picture" ng-init="imageInit(message,message.MMPreviewSrc || message.MMThumbSrc || getMsgImg(message.MsgId,'slave'))">
+                  <!--ng-if="message.MMStatus == CONF.MSG_SEND_STATUS_SUCC"ng-init="(message.MMStatus==CONF.MSG_SEND_STATUS_SUCC)&&(imagesMessagesList.push(getMsgImg(message.MsgId)))" -->
+                  <img class="msg-img" ng-style="message.MMImgStyle" ng-click="previewImg(message)" ng-src="/cgi-bin/mmwebwx-bin/webwxgetmsgimg?&amp;MsgID=5997958234320734939&amp;skey=%40crypt_134c2c57_a53228ff81fd88d09bcf358b0e7cef2d&amp;type=slave" src="/cgi-bin/mmwebwx-bin/webwxgetmsgimg?&amp;MsgID=5997958234320734939&amp;skey=%40crypt_134c2c57_a53228ff81fd88d09bcf358b0e7cef2d&amp;type=slave"
+                    style="height: 120px; width: 90px;">
+                  <i class="arrow"></i>
+                  <p class="loading ng-hide" ng-show="message.MMStatus == 1 || message.MMFileStatus == CONF.MM_SEND_FILE_STATUS_FAIL">
+                    <img src="//res.wx.qq.com/a/wx_fed/webwx/res/static/img/25x4Rho.gif" alt="">
+                  </p>
+                </div>
+              </div>
+              <!-- end ngIf: message.MsgType == CONF.MSGTYPE_IMAGE -->
+
+              <!--语音消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_VOICE -->
+
+              <!--视频消息 todo-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_VIDEO -->
+
+              <!--小视频消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_MICROVIDEO -->
+
+
+              <!--名片消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_SHARECARD -->
+
+
+
+              <!--朋友验证消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_VERIFYMSG -->
+
+              <!--链接消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_APP && message.AppMsgType == CONF.APPMSGTYPE_URL -->
+
+              <!--附件-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_APP && message.AppMsgType == CONF.APPMSGTYPE_ATTACH -->
+
+              <!-- 模版消息 -->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_APP && message.AppMsgType == CONF.APPMSGTYPE_READER_TYPE -->
+
+            </div>
+            <!-- end ngIf: message.MsgType != CONF.MSGTYPE_EMOTICON -->
+
+            <!--表情消息-->
+            <!-- ngIf: message.MsgType == CONF.MSGTYPE_EMOTICON -->
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- end ngRepeat: message in chatContent -->
+  <div ng-repeat="message in chatContent" class="ng-scope">
+    <div class="clearfix" message-directive="">
+      <div ng-switch="" on="message.MsgType" style="overflow: hidden;" ng-init="contact = getUserContact(message.MMActualSender,message.MMPeerUserName);">
+        <!-- 系统消息 -->
+        <!-- ngSwitchWhen: 10000 -->
+        <!-- ngSwitchDefault:  -->
+        <div ng-switch-default="" class="message ng-scope me" ng-class="{&quot;you&quot;:!message.MMIsSend,&quot;me&quot;:message.MMIsSend,&quot;first&quot;:($index==0&amp;&amp;!message.MMTime)}">
+          <!-- ngIf: message.MMTime||(newMsg && newMsg==message) -->
+
+
+
+          <img class="avatar" src="/cgi-bin/mmwebwx-bin/webwxgeticon?seq=638070060&amp;username=@43c142620a1c4d43c5bbc1c5ad6af634&amp;skey=@crypt_134c2c57_a53228ff81fd88d09bcf358b0e7cef2d" mm-src="/cgi-bin/mmwebwx-bin/webwxgeticon?seq=638070060&amp;username=@43c142620a1c4d43c5bbc1c5ad6af634&amp;skey=@crypt_134c2c57_a53228ff81fd88d09bcf358b0e7cef2d"
+            data-cm="{&quot;type&quot;:&quot;avatar&quot;,&quot;username&quot;:&quot;@43c142620a1c4d43c5bbc1c5ad6af634&quot;,&quot;isFriend&quot;:&quot;true&quot;}" title="lcw" ng-click="showProfile($event,message.MMActualSender)">
+          <div class="content">
+            <!-- ngIf: message.MMIsChatRoom && !message.MMIsSend -->
+            <!-- ngIf: message.MsgType != CONF.MSGTYPE_EMOTICON -->
+            <div class="bubble js_message_bubble ng-scope bubble_primary right" ng-if="message.MsgType != CONF.MSGTYPE_EMOTICON" ng-class="{&quot;bubble_default left&quot;:!message.MMIsSend,&quot;bubble_primary right&quot;:message.MMIsSend, &quot;arrow_primary&quot;: message.MsgType == CONF.MSGTYPE_APP &amp;&amp; message.AppMsgType == CONF.APPMSGTYPE_URL, &quot;no_arrow&quot;: message.MsgType == CONF.MSGTYPE_IMAGE || message.MsgType == CONF.MSGTYPE_MICROVIDEO || message.MsgType == CONF.MSGTYPE_VIDEO}"
+              data-cm="{&quot;type&quot;:&quot;message&quot;,&quot;actualSender&quot;:&quot;@43c142620a1c4d43c5bbc1c5ad6af634&quot;,
+                 &quot;msgType&quot;:&quot;1&quot;,&quot;subType&quot;:0,&quot;msgId&quot;:&quot;4360371117675666213&quot;}">
+
+              <!--news消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_TEXT && message.MMPeerUserName == 'newsapp' -->
+
+              <!--红包消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_APP && message.AppMsgType == CONF.APPMSGTYPE_RED_ENVELOPES -->
+              <!--纯文本消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_TEXT && message.SubMsgType != CONF.MSGTYPE_LOCATION -->
+              <div class="bubble_cont ng-scope" ng-if="message.MsgType == CONF.MSGTYPE_TEXT &amp;&amp; message.SubMsgType != CONF.MSGTYPE_LOCATION">
+                <div class="plain">
+                  <pre class="js_message_plain ng-binding" ng-bind-html="message.MMActualContent">放放风</pre>
+                  <img ng-show="message.MMStatus == 1" class="ico_loading ng-hide" src="//res.wx.qq.com/a/wx_fed/webwx/res/static/img/25x4Rho.gif" alt="">
+                  <i class="ico_fail web_wechat_message_fail ng-hide" ng-click="resendMsg(message)" ng-show="message.MMStatus == 5" title="重新发送"></i>
+                </div>
+              </div>
+              <!-- end ngIf: message.MsgType == CONF.MSGTYPE_TEXT && message.SubMsgType != CONF.MSGTYPE_LOCATION -->
+
+              <!-- 地理消息 -->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_TEXT && message.SubMsgType == CONF.MSGTYPE_LOCATION -->
+
+
+
+              <!--图片消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_IMAGE -->
+
+              <!--语音消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_VOICE -->
+
+              <!--视频消息 todo-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_VIDEO -->
+
+              <!--小视频消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_MICROVIDEO -->
+
+
+              <!--名片消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_SHARECARD -->
+
+
+
+              <!--朋友验证消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_VERIFYMSG -->
+
+              <!--链接消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_APP && message.AppMsgType == CONF.APPMSGTYPE_URL -->
+
+              <!--附件-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_APP && message.AppMsgType == CONF.APPMSGTYPE_ATTACH -->
+
+              <!-- 模版消息 -->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_APP && message.AppMsgType == CONF.APPMSGTYPE_READER_TYPE -->
+
+            </div>
+            <!-- end ngIf: message.MsgType != CONF.MSGTYPE_EMOTICON -->
+
+            <!--表情消息-->
+            <!-- ngIf: message.MsgType == CONF.MSGTYPE_EMOTICON -->
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- end ngRepeat: message in chatContent -->
+  <div ng-repeat="message in chatContent" class="ng-scope">
+    <div class="clearfix" message-directive="">
+      <div ng-switch="" on="message.MsgType" style="overflow: hidden;" ng-init="contact = getUserContact(message.MMActualSender,message.MMPeerUserName);">
+        <!-- 系统消息 -->
+        <!-- ngSwitchWhen: 10000 -->
+        <!-- ngSwitchDefault:  -->
+        <div ng-switch-default="" class="message ng-scope you" ng-class="{&quot;you&quot;:!message.MMIsSend,&quot;me&quot;:message.MMIsSend,&quot;first&quot;:($index==0&amp;&amp;!message.MMTime)}">
+          <!-- ngIf: message.MMTime||(newMsg && newMsg==message) -->
+
+
+
+          <img class="avatar" src="/cgi-bin/mmwebwx-bin/webwxgeticon?seq=667459399&amp;username=@695578db07a4bf9b5c2abf5cf57293af&amp;skey=@crypt_134c2c57_a53228ff81fd88d09bcf358b0e7cef2d" mm-src="/cgi-bin/mmwebwx-bin/webwxgeticon?seq=667459399&amp;username=@695578db07a4bf9b5c2abf5cf57293af&amp;skey=@crypt_134c2c57_a53228ff81fd88d09bcf358b0e7cef2d"
+            data-cm="{&quot;type&quot;:&quot;avatar&quot;,&quot;username&quot;:&quot;@695578db07a4bf9b5c2abf5cf57293af&quot;,&quot;isFriend&quot;:&quot;true&quot;}" title="钟红雁" ng-click="showProfile($event,message.MMActualSender)">
+          <div class="content">
+            <!-- ngIf: message.MMIsChatRoom && !message.MMIsSend -->
+            <!-- ngIf: message.MsgType != CONF.MSGTYPE_EMOTICON -->
+            <div class="bubble js_message_bubble ng-scope bubble_default left no_arrow" ng-if="message.MsgType != CONF.MSGTYPE_EMOTICON" ng-class="{&quot;bubble_default left&quot;:!message.MMIsSend,&quot;bubble_primary right&quot;:message.MMIsSend, &quot;arrow_primary&quot;: message.MsgType == CONF.MSGTYPE_APP &amp;&amp; message.AppMsgType == CONF.APPMSGTYPE_URL, &quot;no_arrow&quot;: message.MsgType == CONF.MSGTYPE_IMAGE || message.MsgType == CONF.MSGTYPE_MICROVIDEO || message.MsgType == CONF.MSGTYPE_VIDEO}"
+              data-cm="{&quot;type&quot;:&quot;message&quot;,&quot;actualSender&quot;:&quot;@695578db07a4bf9b5c2abf5cf57293af&quot;,
+                 &quot;msgType&quot;:&quot;3&quot;,&quot;subType&quot;:0,&quot;msgId&quot;:&quot;3641534511477665284&quot;}">
+
+              <!--news消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_TEXT && message.MMPeerUserName == 'newsapp' -->
+
+              <!--红包消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_APP && message.AppMsgType == CONF.APPMSGTYPE_RED_ENVELOPES -->
+              <!--纯文本消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_TEXT && message.SubMsgType != CONF.MSGTYPE_LOCATION -->
+
+              <!-- 地理消息 -->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_TEXT && message.SubMsgType == CONF.MSGTYPE_LOCATION -->
+
+
+
+              <!--图片消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_IMAGE -->
+              <div class="bubble_cont ng-scope" ng-if="message.MsgType == CONF.MSGTYPE_IMAGE">
+                <div class="picture" ng-init="imageInit(message,message.MMPreviewSrc || message.MMThumbSrc || getMsgImg(message.MsgId,'slave'))">
+                  <!--ng-if="message.MMStatus == CONF.MSG_SEND_STATUS_SUCC"ng-init="(message.MMStatus==CONF.MSG_SEND_STATUS_SUCC)&&(imagesMessagesList.push(getMsgImg(message.MsgId)))" -->
+                  <img class="msg-img" ng-style="message.MMImgStyle" ng-click="previewImg(message)" ng-src="/cgi-bin/mmwebwx-bin/webwxgetmsgimg?&amp;MsgID=3641534511477665284&amp;skey=%40crypt_134c2c57_a53228ff81fd88d09bcf358b0e7cef2d&amp;type=slave" src="/cgi-bin/mmwebwx-bin/webwxgetmsgimg?&amp;MsgID=3641534511477665284&amp;skey=%40crypt_134c2c57_a53228ff81fd88d09bcf358b0e7cef2d&amp;type=slave"
+                    style="height: 90px; width: 120px;">
+                  <i class="arrow"></i>
+                  <p class="loading ng-hide" ng-show="message.MMStatus == 1 || message.MMFileStatus == CONF.MM_SEND_FILE_STATUS_FAIL">
+                    <img src="//res.wx.qq.com/a/wx_fed/webwx/res/static/img/25x4Rho.gif" alt="">
+                  </p>
+                </div>
+              </div>
+              <!-- end ngIf: message.MsgType == CONF.MSGTYPE_IMAGE -->
+
+              <!--语音消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_VOICE -->
+
+              <!--视频消息 todo-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_VIDEO -->
+
+              <!--小视频消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_MICROVIDEO -->
+
+
+              <!--名片消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_SHARECARD -->
+
+
+
+              <!--朋友验证消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_VERIFYMSG -->
+
+              <!--链接消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_APP && message.AppMsgType == CONF.APPMSGTYPE_URL -->
+
+              <!--附件-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_APP && message.AppMsgType == CONF.APPMSGTYPE_ATTACH -->
+
+              <!-- 模版消息 -->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_APP && message.AppMsgType == CONF.APPMSGTYPE_READER_TYPE -->
+
+            </div>
+            <!-- end ngIf: message.MsgType != CONF.MSGTYPE_EMOTICON -->
+
+            <!--表情消息-->
+            <!-- ngIf: message.MsgType == CONF.MSGTYPE_EMOTICON -->
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- end ngRepeat: message in chatContent -->
+  <div ng-repeat="message in chatContent" class="ng-scope">
+    <div class="clearfix" message-directive="">
+      <div ng-switch="" on="message.MsgType" style="overflow: hidden;" ng-init="contact = getUserContact(message.MMActualSender,message.MMPeerUserName);">
+        <!-- 系统消息 -->
+        <!-- ngSwitchWhen: 10000 -->
+        <!-- ngSwitchDefault:  -->
+        <div ng-switch-default="" class="message ng-scope you" ng-class="{&quot;you&quot;:!message.MMIsSend,&quot;me&quot;:message.MMIsSend,&quot;first&quot;:($index==0&amp;&amp;!message.MMTime)}">
+          <!-- ngIf: message.MMTime||(newMsg && newMsg==message) -->
+
+
+
+          <img class="avatar" src="/cgi-bin/mmwebwx-bin/webwxgeticon?seq=667459399&amp;username=@695578db07a4bf9b5c2abf5cf57293af&amp;skey=@crypt_134c2c57_a53228ff81fd88d09bcf358b0e7cef2d" mm-src="/cgi-bin/mmwebwx-bin/webwxgeticon?seq=667459399&amp;username=@695578db07a4bf9b5c2abf5cf57293af&amp;skey=@crypt_134c2c57_a53228ff81fd88d09bcf358b0e7cef2d"
+            data-cm="{&quot;type&quot;:&quot;avatar&quot;,&quot;username&quot;:&quot;@695578db07a4bf9b5c2abf5cf57293af&quot;,&quot;isFriend&quot;:&quot;true&quot;}" title="钟红雁" ng-click="showProfile($event,message.MMActualSender)">
+          <div class="content">
+            <!-- ngIf: message.MMIsChatRoom && !message.MMIsSend -->
+            <!-- ngIf: message.MsgType != CONF.MSGTYPE_EMOTICON -->
+            <div class="bubble js_message_bubble ng-scope bubble_default left arrow_primary" ng-if="message.MsgType != CONF.MSGTYPE_EMOTICON" ng-class="{&quot;bubble_default left&quot;:!message.MMIsSend,&quot;bubble_primary right&quot;:message.MMIsSend, &quot;arrow_primary&quot;: message.MsgType == CONF.MSGTYPE_APP &amp;&amp; message.AppMsgType == CONF.APPMSGTYPE_URL, &quot;no_arrow&quot;: message.MsgType == CONF.MSGTYPE_IMAGE || message.MsgType == CONF.MSGTYPE_MICROVIDEO || message.MsgType == CONF.MSGTYPE_VIDEO}"
+              data-cm="{&quot;type&quot;:&quot;message&quot;,&quot;actualSender&quot;:&quot;@695578db07a4bf9b5c2abf5cf57293af&quot;,
+                 &quot;msgType&quot;:&quot;49&quot;,&quot;subType&quot;:0,&quot;msgId&quot;:&quot;3964864622938946533&quot;}">
+
+              <!--news消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_TEXT && message.MMPeerUserName == 'newsapp' -->
+
+              <!--红包消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_APP && message.AppMsgType == CONF.APPMSGTYPE_RED_ENVELOPES -->
+              <!--纯文本消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_TEXT && message.SubMsgType != CONF.MSGTYPE_LOCATION -->
+
+              <!-- 地理消息 -->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_TEXT && message.SubMsgType == CONF.MSGTYPE_LOCATION -->
+
+
+
+              <!--图片消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_IMAGE -->
+
+              <!--语音消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_VOICE -->
+
+              <!--视频消息 todo-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_VIDEO -->
+
+              <!--小视频消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_MICROVIDEO -->
+
+
+              <!--名片消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_SHARECARD -->
+
+
+
+              <!--朋友验证消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_VERIFYMSG -->
+
+              <!--链接消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_APP && message.AppMsgType == CONF.APPMSGTYPE_URL -->
+              <div class="bubble_cont primary ng-scope" ng-if="message.MsgType == CONF.MSGTYPE_APP &amp;&amp; message.AppMsgType == CONF.APPMSGTYPE_URL">
+                <a ng-href="/cgi-bin/mmwebwx-bin/webwxcheckurl?requrl=http%3A%2F%2Fplayer.kuwo.cn%2Fwebmusic%2Fplay%3Fmid%3DMUSIC_15249349%26f%3Dip%26t%3Dweixin%26s%3Dmusic&amp;skey=%40crypt_134c2c57_a53228ff81fd88d09bcf358b0e7cef2d&amp;deviceid=e880133231179113&amp;pass_ticket=qI0uXwUUrwijcuTusel2Mg%252Bpc8ms%252Fqx3nFWy5ZO%252BoiYj65vcpcJR5EEkt3S%252FZxol&amp;opcode=2&amp;scene=1&amp;username=@43c142620a1c4d43c5bbc1c5ad6af634"
+                  ng-click="appMsgClick($event,message.MMAlert)" target="_blank" class="app" href="/cgi-bin/mmwebwx-bin/webwxcheckurl?requrl=http%3A%2F%2Fplayer.kuwo.cn%2Fwebmusic%2Fplay%3Fmid%3DMUSIC_15249349%26f%3Dip%26t%3Dweixin%26s%3Dmusic&amp;skey=%40crypt_134c2c57_a53228ff81fd88d09bcf358b0e7cef2d&amp;deviceid=e880133231179113&amp;pass_ticket=qI0uXwUUrwijcuTusel2Mg%252Bpc8ms%252Fqx3nFWy5ZO%252BoiYj65vcpcJR5EEkt3S%252FZxol&amp;opcode=2&amp;scene=1&amp;username=@43c142620a1c4d43c5bbc1c5ad6af634">
+                  <h4 class="title ng-binding" ng-bind="message.FileName">凉凉-(电视剧《三生三世十里桃花》片尾曲)</h4>
+                  <img class="cover" mm-src="/cgi-bin/mmwebwx-bin/webwxgetmsgimg?&amp;MsgID=3964864622938946533&amp;skey=%40crypt_134c2c57_a53228ff81fd88d09bcf358b0e7cef2d&amp;type=slave" alt="" src="/cgi-bin/mmwebwx-bin/webwxgetmsgimg?&amp;MsgID=3964864622938946533&amp;skey=%40crypt_134c2c57_a53228ff81fd88d09bcf358b0e7cef2d&amp;type=slave">
+                  <p class="desc ng-binding" ng-bind="message.MMAppMsgDesc">张碧晨&amp;杨宗纬</p>
+                </a>
+              </div>
+              <!-- end ngIf: message.MsgType == CONF.MSGTYPE_APP && message.AppMsgType == CONF.APPMSGTYPE_URL -->
+
+              <!--附件-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_APP && message.AppMsgType == CONF.APPMSGTYPE_ATTACH -->
+
+              <!-- 模版消息 -->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_APP && message.AppMsgType == CONF.APPMSGTYPE_READER_TYPE -->
+
+            </div>
+            <!-- end ngIf: message.MsgType != CONF.MSGTYPE_EMOTICON -->
+
+            <!--表情消息-->
+            <!-- ngIf: message.MsgType == CONF.MSGTYPE_EMOTICON -->
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- end ngRepeat: message in chatContent -->
+  <div ng-repeat="message in chatContent" class="ng-scope">
+    <div class="clearfix" message-directive="">
+      <div ng-switch="" on="message.MsgType" style="overflow: hidden;" ng-init="contact = getUserContact(message.MMActualSender,message.MMPeerUserName);">
+        <!-- 系统消息 -->
+        <!-- ngSwitchWhen: 10000 -->
+        <!-- ngSwitchDefault:  -->
+        <div ng-switch-default="" class="message ng-scope you" ng-class="{&quot;you&quot;:!message.MMIsSend,&quot;me&quot;:message.MMIsSend,&quot;first&quot;:($index==0&amp;&amp;!message.MMTime)}">
+          <!-- ngIf: message.MMTime||(newMsg && newMsg==message) -->
+          <div ng-if="message.MMTime||(newMsg &amp;&amp; newMsg==message)" class="message_system ng-scope">
+            <!-- ngIf: (isScrollToUnread && newMsg==message) -->
+            <!-- ngIf: (message.MMTime&&!(newMsg && newMsg==message)) -->
+            <div ng-if="(message.MMTime&amp;&amp;!(newMsg &amp;&amp; newMsg==message))" class="content ng-binding ng-scope">21:48</div>
+            <!-- end ngIf: (message.MMTime&&!(newMsg && newMsg==message)) -->
+          </div>
+          <!-- end ngIf: message.MMTime||(newMsg && newMsg==message) -->
+
+
+
+          <img class="avatar" src="/cgi-bin/mmwebwx-bin/webwxgeticon?seq=667459399&amp;username=@695578db07a4bf9b5c2abf5cf57293af&amp;skey=@crypt_134c2c57_a53228ff81fd88d09bcf358b0e7cef2d" mm-src="/cgi-bin/mmwebwx-bin/webwxgeticon?seq=667459399&amp;username=@695578db07a4bf9b5c2abf5cf57293af&amp;skey=@crypt_134c2c57_a53228ff81fd88d09bcf358b0e7cef2d"
+            data-cm="{&quot;type&quot;:&quot;avatar&quot;,&quot;username&quot;:&quot;@695578db07a4bf9b5c2abf5cf57293af&quot;,&quot;isFriend&quot;:&quot;true&quot;}" title="钟红雁" ng-click="showProfile($event,message.MMActualSender)">
+          <div class="content">
+            <!-- ngIf: message.MMIsChatRoom && !message.MMIsSend -->
+            <!-- ngIf: message.MsgType != CONF.MSGTYPE_EMOTICON -->
+            <div class="bubble js_message_bubble ng-scope bubble_default left no_arrow" ng-if="message.MsgType != CONF.MSGTYPE_EMOTICON" ng-class="{&quot;bubble_default left&quot;:!message.MMIsSend,&quot;bubble_primary right&quot;:message.MMIsSend, &quot;arrow_primary&quot;: message.MsgType == CONF.MSGTYPE_APP &amp;&amp; message.AppMsgType == CONF.APPMSGTYPE_URL, &quot;no_arrow&quot;: message.MsgType == CONF.MSGTYPE_IMAGE || message.MsgType == CONF.MSGTYPE_MICROVIDEO || message.MsgType == CONF.MSGTYPE_VIDEO}"
+              data-cm="{&quot;type&quot;:&quot;message&quot;,&quot;actualSender&quot;:&quot;@695578db07a4bf9b5c2abf5cf57293af&quot;,
+                 &quot;msgType&quot;:&quot;43&quot;,&quot;subType&quot;:0,&quot;msgId&quot;:&quot;549813129762121349&quot;}">
+
+              <!--news消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_TEXT && message.MMPeerUserName == 'newsapp' -->
+
+              <!--红包消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_APP && message.AppMsgType == CONF.APPMSGTYPE_RED_ENVELOPES -->
+              <!--纯文本消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_TEXT && message.SubMsgType != CONF.MSGTYPE_LOCATION -->
+
+              <!-- 地理消息 -->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_TEXT && message.SubMsgType == CONF.MSGTYPE_LOCATION -->
+
+
+
+              <!--图片消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_IMAGE -->
+
+              <!--语音消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_VOICE -->
+
+              <!--视频消息 todo-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_VIDEO -->
+              <div class="bubble_cont ng-scope" ng-if="message.MsgType == CONF.MSGTYPE_VIDEO">
+                <div class="video" ng-click="showVideo(message.MsgId)">
+                  <!-- ngIf: message.MMStatus!=1 && message.MMFileStatus !== CONF.MM_SEND_FILE_STATUS_FAIL --><img height="120" width="160" ng-if="message.MMStatus!=1 &amp;&amp; message.MMFileStatus !== CONF.MM_SEND_FILE_STATUS_FAIL" class="msg-img ng-scope" ng-style="message.MMImgStyle" mm-src="/cgi-bin/mmwebwx-bin/webwxgetmsgimg?&amp;MsgID=549813129762121349&amp;skey=%40crypt_134c2c57_a53228ff81fd88d09bcf358b0e7cef2d&amp;type=slave"
+                    src="/cgi-bin/mmwebwx-bin/webwxgetmsgimg?&amp;MsgID=549813129762121349&amp;skey=%40crypt_134c2c57_a53228ff81fd88d09bcf358b0e7cef2d&amp;type=slave" style="height: 398px; width: 224px;">
+                  <!-- end ngIf: message.MMStatus!=1 && message.MMFileStatus !== CONF.MM_SEND_FILE_STATUS_FAIL -->
+                  <!-- ngIf: message.MMStatus!=1 && message.MMFileStatus !== CONF.MM_SEND_FILE_STATUS_FAIL --><i ng-if="message.MMStatus!=1 &amp;&amp; message.MMFileStatus !== CONF.MM_SEND_FILE_STATUS_FAIL" class="web_wechat_paly ng-scope"></i>
+                  <!-- end ngIf: message.MMStatus!=1 && message.MMFileStatus !== CONF.MM_SEND_FILE_STATUS_FAIL -->
+                  <!-- ngIf: message.MMStatus!=1 && message.MMFileStatus !== CONF.MM_SEND_FILE_STATUS_FAIL --><i ng-if="message.MMStatus!=1 &amp;&amp; message.MMFileStatus !== CONF.MM_SEND_FILE_STATUS_FAIL" class="arrow ng-scope"></i>
+                  <!-- end ngIf: message.MMStatus!=1 && message.MMFileStatus !== CONF.MM_SEND_FILE_STATUS_FAIL -->
+                  <!-- ngIf: message.MMStatus == 1 || message.MMFileStatus == CONF.MM_SEND_FILE_STATUS_FAIL -->
+
+                  <p class="loading ng-hide" ng-show="message.MMStatus == 1 || message.MMFileStatus == CONF.MM_SEND_FILE_STATUS_FAIL">
+                    <img src="//res.wx.qq.com/a/wx_fed/webwx/res/static/img/25x4Rho.gif" alt="">
+                  </p>
+                </div>
+
+              </div>
+              <!-- end ngIf: message.MsgType == CONF.MSGTYPE_VIDEO -->
+
+              <!--小视频消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_MICROVIDEO -->
+
+
+              <!--名片消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_SHARECARD -->
+
+
+
+              <!--朋友验证消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_VERIFYMSG -->
+
+              <!--链接消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_APP && message.AppMsgType == CONF.APPMSGTYPE_URL -->
+
+              <!--附件-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_APP && message.AppMsgType == CONF.APPMSGTYPE_ATTACH -->
+
+              <!-- 模版消息 -->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_APP && message.AppMsgType == CONF.APPMSGTYPE_READER_TYPE -->
+
+            </div>
+            <!-- end ngIf: message.MsgType != CONF.MSGTYPE_EMOTICON -->
+
+            <!--表情消息-->
+            <!-- ngIf: message.MsgType == CONF.MSGTYPE_EMOTICON -->
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- end ngRepeat: message in chatContent -->
+  <div ng-repeat="message in chatContent" class="ng-scope">
+    <div class="clearfix" message-directive="">
+      <div ng-switch="" on="message.MsgType" style="overflow: hidden;" ng-init="contact = getUserContact(message.MMActualSender,message.MMPeerUserName);">
+        <!-- 系统消息 -->
+        <!-- ngSwitchWhen: 10000 -->
+        <!-- ngSwitchDefault:  -->
+        <div ng-switch-default="" class="message ng-scope you" ng-class="{&quot;you&quot;:!message.MMIsSend,&quot;me&quot;:message.MMIsSend,&quot;first&quot;:($index==0&amp;&amp;!message.MMTime)}">
+          <!-- ngIf: message.MMTime||(newMsg && newMsg==message) -->
+
+
+
+          <img class="avatar" src="/cgi-bin/mmwebwx-bin/webwxgeticon?seq=667459399&amp;username=@695578db07a4bf9b5c2abf5cf57293af&amp;skey=@crypt_134c2c57_a53228ff81fd88d09bcf358b0e7cef2d" mm-src="/cgi-bin/mmwebwx-bin/webwxgeticon?seq=667459399&amp;username=@695578db07a4bf9b5c2abf5cf57293af&amp;skey=@crypt_134c2c57_a53228ff81fd88d09bcf358b0e7cef2d"
+            data-cm="{&quot;type&quot;:&quot;avatar&quot;,&quot;username&quot;:&quot;@695578db07a4bf9b5c2abf5cf57293af&quot;,&quot;isFriend&quot;:&quot;true&quot;}" title="钟红雁" ng-click="showProfile($event,message.MMActualSender)">
+          <div class="content">
+            <!-- ngIf: message.MMIsChatRoom && !message.MMIsSend -->
+            <!-- ngIf: message.MsgType != CONF.MSGTYPE_EMOTICON -->
+            <div class="bubble js_message_bubble ng-scope bubble_default left" ng-if="message.MsgType != CONF.MSGTYPE_EMOTICON" ng-class="{&quot;bubble_default left&quot;:!message.MMIsSend,&quot;bubble_primary right&quot;:message.MMIsSend, &quot;arrow_primary&quot;: message.MsgType == CONF.MSGTYPE_APP &amp;&amp; message.AppMsgType == CONF.APPMSGTYPE_URL, &quot;no_arrow&quot;: message.MsgType == CONF.MSGTYPE_IMAGE || message.MsgType == CONF.MSGTYPE_MICROVIDEO || message.MsgType == CONF.MSGTYPE_VIDEO}"
+              data-cm="{&quot;type&quot;:&quot;message&quot;,&quot;actualSender&quot;:&quot;@695578db07a4bf9b5c2abf5cf57293af&quot;,
+                 &quot;msgType&quot;:&quot;34&quot;,&quot;subType&quot;:0,&quot;msgId&quot;:&quot;1131906973358962298&quot;}">
+
+              <!--news消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_TEXT && message.MMPeerUserName == 'newsapp' -->
+
+              <!--红包消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_APP && message.AppMsgType == CONF.APPMSGTYPE_RED_ENVELOPES -->
+              <!--纯文本消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_TEXT && message.SubMsgType != CONF.MSGTYPE_LOCATION -->
+
+              <!-- 地理消息 -->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_TEXT && message.SubMsgType == CONF.MSGTYPE_LOCATION -->
+
+
+
+              <!--图片消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_IMAGE -->
+
+              <!--语音消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_VOICE -->
+              <div class="bubble_cont ng-scope" ng-if="message.MsgType == CONF.MSGTYPE_VOICE">
+                <div class="voice" ng-style="{'width':40 + 7*message.VoiceLength/1000}" ng-click="playVoice(message)" style="width: 54.42px;">
+                  <i ng-class="{'web_wechat_voice_green':message.MMIsSend,'web_wechat_voice_gray':!message.MMIsSend, 'web_wechat_voice_playing': message.MMPlaying&amp;&amp;message.MMIsSend,'web_wechat_voice_gray_playing': message.MMPlaying&amp;&amp;!message.MMIsSend}"
+                    class="web_wechat_voice_gray"></i>
+                  <span class="duration ng-binding">2''<i class="web_wechat_noread ng-hide" ng-show="message.MMVoiceUnRead"></i></span>
+                </div>
+              </div>
+              <!-- end ngIf: message.MsgType == CONF.MSGTYPE_VOICE -->
+
+              <!--视频消息 todo-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_VIDEO -->
+
+              <!--小视频消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_MICROVIDEO -->
+
+
+              <!--名片消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_SHARECARD -->
+
+
+
+              <!--朋友验证消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_VERIFYMSG -->
+
+              <!--链接消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_APP && message.AppMsgType == CONF.APPMSGTYPE_URL -->
+
+              <!--附件-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_APP && message.AppMsgType == CONF.APPMSGTYPE_ATTACH -->
+
+              <!-- 模版消息 -->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_APP && message.AppMsgType == CONF.APPMSGTYPE_READER_TYPE -->
+
+            </div>
+            <!-- end ngIf: message.MsgType != CONF.MSGTYPE_EMOTICON -->
+
+            <!--表情消息-->
+            <!-- ngIf: message.MsgType == CONF.MSGTYPE_EMOTICON -->
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- end ngRepeat: message in chatContent -->
+  <div ng-repeat="message in chatContent" class="ng-scope">
+    <div class="clearfix" message-directive="">
+      <div ng-switch="" on="message.MsgType" style="overflow: hidden;" ng-init="contact = getUserContact(message.MMActualSender,message.MMPeerUserName);">
+        <!-- 系统消息 -->
+        <!-- ngSwitchWhen: 10000 -->
+        <!-- ngSwitchDefault:  -->
+        <div ng-switch-default="" class="message ng-scope me" ng-class="{&quot;you&quot;:!message.MMIsSend,&quot;me&quot;:message.MMIsSend,&quot;first&quot;:($index==0&amp;&amp;!message.MMTime)}">
+          <!-- ngIf: message.MMTime||(newMsg && newMsg==message) -->
+
+
+
+          <img class="avatar" src="/cgi-bin/mmwebwx-bin/webwxgeticon?seq=638070060&amp;username=@43c142620a1c4d43c5bbc1c5ad6af634&amp;skey=@crypt_134c2c57_a53228ff81fd88d09bcf358b0e7cef2d" mm-src="/cgi-bin/mmwebwx-bin/webwxgeticon?seq=638070060&amp;username=@43c142620a1c4d43c5bbc1c5ad6af634&amp;skey=@crypt_134c2c57_a53228ff81fd88d09bcf358b0e7cef2d"
+            data-cm="{&quot;type&quot;:&quot;avatar&quot;,&quot;username&quot;:&quot;@43c142620a1c4d43c5bbc1c5ad6af634&quot;,&quot;isFriend&quot;:&quot;true&quot;}" title="lcw" ng-click="showProfile($event,message.MMActualSender)">
+          <div class="content">
+            <!-- ngIf: message.MMIsChatRoom && !message.MMIsSend -->
+            <!-- ngIf: message.MsgType != CONF.MSGTYPE_EMOTICON -->
+            <div class="bubble js_message_bubble ng-scope bubble_primary right" ng-if="message.MsgType != CONF.MSGTYPE_EMOTICON" ng-class="{&quot;bubble_default left&quot;:!message.MMIsSend,&quot;bubble_primary right&quot;:message.MMIsSend, &quot;arrow_primary&quot;: message.MsgType == CONF.MSGTYPE_APP &amp;&amp; message.AppMsgType == CONF.APPMSGTYPE_URL, &quot;no_arrow&quot;: message.MsgType == CONF.MSGTYPE_IMAGE || message.MsgType == CONF.MSGTYPE_MICROVIDEO || message.MsgType == CONF.MSGTYPE_VIDEO}"
+              data-cm="{&quot;type&quot;:&quot;message&quot;,&quot;actualSender&quot;:&quot;@43c142620a1c4d43c5bbc1c5ad6af634&quot;,
+                 &quot;msgType&quot;:&quot;1&quot;,&quot;subType&quot;:0,&quot;msgId&quot;:&quot;1141283498018744671&quot;}">
+
+              <!--news消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_TEXT && message.MMPeerUserName == 'newsapp' -->
+
+              <!--红包消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_APP && message.AppMsgType == CONF.APPMSGTYPE_RED_ENVELOPES -->
+              <!--纯文本消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_TEXT && message.SubMsgType != CONF.MSGTYPE_LOCATION -->
+              <div class="bubble_cont ng-scope" ng-if="message.MsgType == CONF.MSGTYPE_TEXT &amp;&amp; message.SubMsgType != CONF.MSGTYPE_LOCATION">
+                <div class="plain">
+                  <pre class="js_message_plain ng-binding" ng-bind-html="message.MMActualContent">啦啦啦啦啦啦</pre>
+                  <img ng-show="message.MMStatus == 1" class="ico_loading ng-hide" src="//res.wx.qq.com/a/wx_fed/webwx/res/static/img/25x4Rho.gif" alt="">
+                  <i class="ico_fail web_wechat_message_fail ng-hide" ng-click="resendMsg(message)" ng-show="message.MMStatus == 5" title="重新发送"></i>
+                </div>
+              </div>
+              <!-- end ngIf: message.MsgType == CONF.MSGTYPE_TEXT && message.SubMsgType != CONF.MSGTYPE_LOCATION -->
+
+              <!-- 地理消息 -->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_TEXT && message.SubMsgType == CONF.MSGTYPE_LOCATION -->
+
+
+
+              <!--图片消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_IMAGE -->
+
+              <!--语音消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_VOICE -->
+
+              <!--视频消息 todo-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_VIDEO -->
+
+              <!--小视频消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_MICROVIDEO -->
+
+
+              <!--名片消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_SHARECARD -->
+
+
+
+              <!--朋友验证消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_VERIFYMSG -->
+
+              <!--链接消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_APP && message.AppMsgType == CONF.APPMSGTYPE_URL -->
+
+              <!--附件-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_APP && message.AppMsgType == CONF.APPMSGTYPE_ATTACH -->
+
+              <!-- 模版消息 -->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_APP && message.AppMsgType == CONF.APPMSGTYPE_READER_TYPE -->
+
+            </div>
+            <!-- end ngIf: message.MsgType != CONF.MSGTYPE_EMOTICON -->
+
+            <!--表情消息-->
+            <!-- ngIf: message.MsgType == CONF.MSGTYPE_EMOTICON -->
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- end ngRepeat: message in chatContent -->
+  <div ng-repeat="message in chatContent" class="ng-scope">
+    <div class="clearfix" message-directive="">
+      <div ng-switch="" on="message.MsgType" style="overflow: hidden;" ng-init="contact = getUserContact(message.MMActualSender,message.MMPeerUserName);">
+        <!-- 系统消息 -->
+        <!-- ngSwitchWhen: 10000 -->
+        <!-- ngSwitchDefault:  -->
+        <div ng-switch-default="" class="message ng-scope you" ng-class="{&quot;you&quot;:!message.MMIsSend,&quot;me&quot;:message.MMIsSend,&quot;first&quot;:($index==0&amp;&amp;!message.MMTime)}">
+          <!-- ngIf: message.MMTime||(newMsg && newMsg==message) -->
+
+
+
+          <img class="avatar" src="/cgi-bin/mmwebwx-bin/webwxgeticon?seq=667459399&amp;username=@695578db07a4bf9b5c2abf5cf57293af&amp;skey=@crypt_134c2c57_a53228ff81fd88d09bcf358b0e7cef2d" mm-src="/cgi-bin/mmwebwx-bin/webwxgeticon?seq=667459399&amp;username=@695578db07a4bf9b5c2abf5cf57293af&amp;skey=@crypt_134c2c57_a53228ff81fd88d09bcf358b0e7cef2d"
+            data-cm="{&quot;type&quot;:&quot;avatar&quot;,&quot;username&quot;:&quot;@695578db07a4bf9b5c2abf5cf57293af&quot;,&quot;isFriend&quot;:&quot;true&quot;}" title="钟红雁" ng-click="showProfile($event,message.MMActualSender)">
+          <div class="content">
+            <!-- ngIf: message.MMIsChatRoom && !message.MMIsSend -->
+            <!-- ngIf: message.MsgType != CONF.MSGTYPE_EMOTICON -->
+            <div class="bubble js_message_bubble ng-scope bubble_default left no_arrow" ng-if="message.MsgType != CONF.MSGTYPE_EMOTICON" ng-class="{&quot;bubble_default left&quot;:!message.MMIsSend,&quot;bubble_primary right&quot;:message.MMIsSend, &quot;arrow_primary&quot;: message.MsgType == CONF.MSGTYPE_APP &amp;&amp; message.AppMsgType == CONF.APPMSGTYPE_URL, &quot;no_arrow&quot;: message.MsgType == CONF.MSGTYPE_IMAGE || message.MsgType == CONF.MSGTYPE_MICROVIDEO || message.MsgType == CONF.MSGTYPE_VIDEO}"
+              data-cm="{&quot;type&quot;:&quot;message&quot;,&quot;actualSender&quot;:&quot;@695578db07a4bf9b5c2abf5cf57293af&quot;,
+                 &quot;msgType&quot;:&quot;43&quot;,&quot;subType&quot;:0,&quot;msgId&quot;:&quot;852191933550043871&quot;}">
+
+              <!--news消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_TEXT && message.MMPeerUserName == 'newsapp' -->
+
+              <!--红包消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_APP && message.AppMsgType == CONF.APPMSGTYPE_RED_ENVELOPES -->
+              <!--纯文本消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_TEXT && message.SubMsgType != CONF.MSGTYPE_LOCATION -->
+
+              <!-- 地理消息 -->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_TEXT && message.SubMsgType == CONF.MSGTYPE_LOCATION -->
+
+
+
+              <!--图片消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_IMAGE -->
+
+              <!--语音消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_VOICE -->
+
+              <!--视频消息 todo-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_VIDEO -->
+              <div class="bubble_cont ng-scope" ng-if="message.MsgType == CONF.MSGTYPE_VIDEO">
+                <div class="video" ng-click="showVideo(message.MsgId)">
+                  <!-- ngIf: message.MMStatus!=1 && message.MMFileStatus !== CONF.MM_SEND_FILE_STATUS_FAIL --><img height="120" width="160" ng-if="message.MMStatus!=1 &amp;&amp; message.MMFileStatus !== CONF.MM_SEND_FILE_STATUS_FAIL" class="msg-img ng-scope" ng-style="message.MMImgStyle" mm-src="/cgi-bin/mmwebwx-bin/webwxgetmsgimg?&amp;MsgID=852191933550043871&amp;skey=%40crypt_134c2c57_a53228ff81fd88d09bcf358b0e7cef2d&amp;type=slave"
+                    src="/cgi-bin/mmwebwx-bin/webwxgetmsgimg?&amp;MsgID=852191933550043871&amp;skey=%40crypt_134c2c57_a53228ff81fd88d09bcf358b0e7cef2d&amp;type=slave" style="height: 640px; width: 480px;">
+                  <!-- end ngIf: message.MMStatus!=1 && message.MMFileStatus !== CONF.MM_SEND_FILE_STATUS_FAIL -->
+                  <!-- ngIf: message.MMStatus!=1 && message.MMFileStatus !== CONF.MM_SEND_FILE_STATUS_FAIL --><i ng-if="message.MMStatus!=1 &amp;&amp; message.MMFileStatus !== CONF.MM_SEND_FILE_STATUS_FAIL" class="web_wechat_paly ng-scope"></i>
+                  <!-- end ngIf: message.MMStatus!=1 && message.MMFileStatus !== CONF.MM_SEND_FILE_STATUS_FAIL -->
+                  <!-- ngIf: message.MMStatus!=1 && message.MMFileStatus !== CONF.MM_SEND_FILE_STATUS_FAIL --><i ng-if="message.MMStatus!=1 &amp;&amp; message.MMFileStatus !== CONF.MM_SEND_FILE_STATUS_FAIL" class="arrow ng-scope"></i>
+                  <!-- end ngIf: message.MMStatus!=1 && message.MMFileStatus !== CONF.MM_SEND_FILE_STATUS_FAIL -->
+                  <!-- ngIf: message.MMStatus == 1 || message.MMFileStatus == CONF.MM_SEND_FILE_STATUS_FAIL -->
+
+                  <p class="loading ng-hide" ng-show="message.MMStatus == 1 || message.MMFileStatus == CONF.MM_SEND_FILE_STATUS_FAIL">
+                    <img src="//res.wx.qq.com/a/wx_fed/webwx/res/static/img/25x4Rho.gif" alt="">
+                  </p>
+                </div>
+
+              </div>
+              <!-- end ngIf: message.MsgType == CONF.MSGTYPE_VIDEO -->
+
+              <!--小视频消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_MICROVIDEO -->
+
+
+              <!--名片消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_SHARECARD -->
+
+
+
+              <!--朋友验证消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_VERIFYMSG -->
+
+              <!--链接消息-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_APP && message.AppMsgType == CONF.APPMSGTYPE_URL -->
+
+              <!--附件-->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_APP && message.AppMsgType == CONF.APPMSGTYPE_ATTACH -->
+
+              <!-- 模版消息 -->
+              <!-- ngIf: message.MsgType == CONF.MSGTYPE_APP && message.AppMsgType == CONF.APPMSGTYPE_READER_TYPE -->
+
+            </div>
+            <!-- end ngIf: message.MsgType != CONF.MSGTYPE_EMOTICON -->
+
+            <!--表情消息-->
+            <!-- ngIf: message.MsgType == CONF.MSGTYPE_EMOTICON -->
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- end ngRepeat: message in chatContent -->
+  <div ng-style="{height:bottomHeight}" class="bottom-placeholder ng-scope" style="height: 165px;"></div>
+</div>
