@@ -8,7 +8,7 @@
 
 ## 打包
 
-#### 当前平台
+#### 当前平台(我的是win32-x64)
 `npm run pack`
 #### mac
 `npm run pack-mac`
