@@ -3,20 +3,30 @@
   "version": "1.0.0",
   "description": "A simple chatbot client app make with electron",
   "productName": "chatbot",
-  "main": "index.js",
+  "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "pack": "electron-packager ./ --out ../dist --platform=win32 --arch=x64 --overwrite --icon=./img/icon/icon.ico",
+    "pack": "electron-packager ./ chatbot --out ../dist --platform=win32 --arch=x64 --ignore=./appData --overwrite --icon=./img/icon/icon.ico --prune",
     "pack-win-32": "electron-packager . --out ../dist --platform=win32 --arch=ia32",
     "pack-mac": "electron-packager . --out ../dist --platform=barwin --arch=x64 --overwrite --icon=./img/icon/icon.ico",
     "winstall": "node winstall.js"
   },
   "author": "luchunwei",
   "license": "ISC",
-  "dependencies": {},
+  "dependencies": {
+    "baidu-aip-sdk": "^1.4.0"
+  },
   "devDependencies": {
-    "electron": "^1.7.6",
-    "electron-packager": "^8.7.2",
+    "electron": "^1.8.1",
+    "electron-packager": "^9.1.0",
     "electron-winstaller": "^2.6.3"
+  },
+  "build": {
+    "appId": "chatbot",
+    "copyright": "RSVP",
+    "productName": "chatbot",
+    "win": {
+      "icon": "img/icon/icon.ico"
+    }
   }
 }
