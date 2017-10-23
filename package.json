@@ -1,25 +1,45 @@
 {
   "name": "chatbot",
   "version": "1.0.0",
+  "electronVersion": "1.8.1",
   "description": "A simple chatbot client app make with electron",
   "productName": "chatbot",
   "main": "main.js",
+  "private": true,
   "scripts": {
     "start": "electron .",
-    "pack": "electron-packager ./ chatbot --out ../dist --platform=win32 --arch=x64 --ignore=./appData --overwrite --icon=./img/icon/icon.ico --prune",
-    "pack-win-32": "electron-packager . --out ../dist --platform=win32 --arch=ia32",
-    "pack-mac": "electron-packager . --out ../dist --platform=barwin --arch=x64 --overwrite --icon=./img/icon/icon.ico",
+    "dev": "electron . --debug",
+    "package": "npm-run-all pack:*",
+    "pack-win-mac": "electron-packager ./ chatbot --out ../dist --overwrite --asar --platform=win32,darwin --arch=x64,ia32 --ignore=./appData --icon=./img/icon/icon.ico",
+    "pack-all": "electron-packager ./ --out ../dist --all --overwrite --asar --ignore=./appData --icon=./img/icon/icon.ico",
+    "pack:win64": "electron-packager ./ --out ../dist --overwrite --asar --ignore=./appData --icon=./img/icon/icon.ico",
+    "pack:win32": "electron-packager ./ --out ../dist --overwrite --ignore=./appData --icon=./img/icon/icon.ico --platform=win32 --arch=ia32",
+    "pack:mac": "electron-packager ./ --out ../dist --overwrite --asar --ignore=./appData --icon=./img/icon/icon.ico --platform=darwin --arch=x64",
     "winstall": "node winstall.js"
   },
+  "repository": "https://github.com/chunwei/chatbot",
+  "bugs": {
+    "url": "https://github.com/Microsoft/chatbot/issues"
+  },
+  "keywords": [
+    "chatbot",
+    "bot",
+    "chat",
+    "ai"
+  ],
   "author": "luchunwei",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
+    "glob": "^7.1.2",
     "baidu-aip-sdk": "^1.4.0"
   },
   "devDependencies": {
+    "devtron": "^1.4.0",
     "electron": "^1.8.1",
     "electron-packager": "^9.1.0",
-    "electron-winstaller": "^2.6.3"
+    "electron-winstaller": "^2.6.3",
+    "eslint-config-google": "^0.9.1",
+    "npm-run-all": "^4.1.1"
   },
   "build": {
     "appId": "chatbot",

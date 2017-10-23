@@ -1,0 +1,30 @@
+.settings_panel {
+  display: none;
+  background: #8fbc8f;
+  padding: 15px 0;
+}
+
+.settings_panel label {
+  width: 50px;
+  display: inline-block;
+  text-align: right;
+  padding-right: 10px;
+}
+
+.settings_panel input {
+  width: 66%;
+}
+
+pre#editArea {
+  background: #f9f9f9;
+  border: solid 1px #ddd;
+}
+
+pre#editArea:focus {
+  background: white;
+  border: solid 1px gold;
+}
+
+.plain .js_message_plain.error {
+  color: red;
+}

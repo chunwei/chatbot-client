@@ -5,6 +5,7 @@
   <title>ChatBot</title>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="css/nativize.css">
   <link href="css/weixin.css" rel="stylesheet">
   <link href="css/style.css" rel="stylesheet">
   <script src='js/utils.js'></script>
@@ -34,10 +35,22 @@
                 <i class="web_wechat_down_icon"></i>
               </div>
               <div class="settings_panel" id='settings_panel'>
-                <p><label for='settings_endpoint'>url:</label><input type="text" id='settings_endpoint' /></p>
-                <p><label for='settings_token'>token:</label><input type="text" id='settings_token' /></p>
-                <p><label for='settings_appid'>appid:</label><input type="text" id='settings_appid' /></p>
-                <p><label for='settings_userid'>userid:</label><input type="text" id='settings_userid' /></p>
+                <p>
+                  <label for='settings_endpoint'>url:</label>
+                  <input type="text" id='settings_endpoint' />
+                </p>
+                <p>
+                  <label for='settings_token'>token:</label>
+                  <input type="text" id='settings_token' />
+                </p>
+                <p>
+                  <label for='settings_appid'>appid:</label>
+                  <input type="text" id='settings_appid' />
+                </p>
+                <p>
+                  <label for='settings_userid'>userid:</label>
+                  <input type="text" id='settings_userid' />
+                </p>
                 <p>Jira设置:</p>
                 <p>项目id : sow1填 11205， sow2填 11206</p>
                 <p>
@@ -71,13 +84,13 @@
               <div ng-style="{height:topHeight}" class="top-placeholder ng-scope" style="height: 0px;"></div>
               <!-- ngRepeat: message in chatContent -->
 
-              <div ng-style="{height:bottomHeight}" class="bottom-placeholder ng-scope" style="height: 0px;"></div>
+              <div class="bottom-placeholder" style="height: 0px;"></div>
             </div>
             <div id="prerender" style="visibility: hidden;  position: absolute;  width: 100%;  top: 333px;  height: 0;  padding: 0 19px;  box-sizing: border-box;  margin-left: -19px;  overflow: hidden;"></div>
           </div>
           <!--END BD-->
           <!--BEGIN FT-->
-          <div class="box_ft ng-scope" style="margin: 0 19px;">
+          <div class="box_ft ng-scope">
             <div class="toolbar" id="tool_bar">
               <a class="web_wechat_tab_add" href="javascript:;" title="工具按钮预留"></a>
               <a class="web_wechat_face" ng-click="showEmojiPanel($event)" href="javascript:;" title="表情预留"></a>
@@ -85,7 +98,8 @@
                                 ng-click="screenShot()" href="javascript:;" title="截屏"></a> -->
               <a id="selectFileBtn" class="web_wechat_pic js_fileupload ng-isolate-scope webuploader-container" href="javascript:;" title="选择测试脚本">
               </a>
-              <span id="selected-file"><span>
+              <span id="selected-file">
+                <span>
             </div>
             <div class="content ng-isolate-scope">
               <pre id="editArea" class="flex edit_area ng-isolate-scope ng-valid ng-dirty" contenteditable="true"></pre>
@@ -116,6 +130,7 @@
       conversation,
       $chatTester
     } = require('./renderer');
+
   </script>
 </body>
 

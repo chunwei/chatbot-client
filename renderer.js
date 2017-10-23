@@ -4,8 +4,8 @@
 console.log('load renderer.js');
 
 
-const shell = require('electron').shell
-const clipboard = require('electron').clipboard;
+const shell = require('electron').shell;
+//const clipboard = require('electron').clipboard
 const BrowserWindow = require('electron').remote.BrowserWindow;
 const ipcRenderer = require('electron').ipcRenderer;
 const http = require('http');
@@ -13,40 +13,40 @@ const readline = require('readline');
 const path = require('path');
 const fs = require('fs');
 
-const { SETTINGS, showSettings, loadSetting, saveSetting } = require('./render/setting');
+const { SETTINGS /* , showSettings, loadSetting, saveSetting  */ } = require('./render/setting');
 const baidu = require('./js/baiduTTS');
 const Reporter = require('./render/jirareporter');
 const $chatTester = require('./render/chatTester');
 if ($chatTester) {
-  console.log('$chatTester ready.')
+  console.log('$chatTester ready.');
 }
 var conversation = []; //保存聊天记录 [{q:string,a:jsonstring},]
 var t1 = -1; //计时器
-var userid = uuid(12, 16); //like '012345678999';
+//var userid = uuid(12, 16); //like '012345678999';
 
 var scrollContent = document.querySelector('#jqueryScrollbar');
-var text = document.getElementById('text');
+//var text = document.getElementById('text');
 const btn_send = document.querySelector('.btn_send');
 const editArea = document.querySelector('#editArea');
 
 const selectFileBtn = document.getElementById('selectFileBtn');
 
-selectFileBtn.addEventListener('click', function (event) {
+selectFileBtn.addEventListener('click', function() {
   ipcRenderer.send('open-file-dialog');
-})
+});
 
-ipcRenderer.on('selected-files', function (event, files) {
+ipcRenderer.on('selected-files', function(event, files) {
   let filenames = files.map(file => path.parse(file).name);
-  document.getElementById('selected-file').innerHTML = `测试脚本: ${filenames}`
-    //startBatchTest(files);
+  document.getElementById('selected-file').innerHTML = `测试脚本: ${filenames}`;
+  //startBatchTest(files);
   testFiles1by1(files);
-})
+});
 
-btn_send.addEventListener('click', function () {
+btn_send.addEventListener('click', function() {
   sendTextMessage();
 });
 
-editArea.addEventListener('keydown', function (event) {
+editArea.addEventListener('keydown', function(event) {
   //console.log(event);
   if ( /*event.ctrlKey &&*/ event.keyCode == 13) {
     event.preventDefault();
@@ -64,7 +64,7 @@ function testFiles1by1(files) {
 
   function testOneFile(i) {
     console.log(`test file i=${i+1} of ${c}`);
-    let file = files[i]
+    let file = files[i];
     readLine(file).then(res => {
       $chatTester.doTest(res.lines, res.voiceopen).then(
         d => {
@@ -72,7 +72,7 @@ function testFiles1by1(files) {
           if (i < c) {
             testOneFile(i);
           } else {
-            console.log("test file over at i=" + i);
+            console.log('test file over at i=' + i);
           }
         }
       );
@@ -88,7 +88,7 @@ function startBatchTest(files) {
   let promises = files.map(file => {
     return readLine(file);
   });
-  Promise.all(promises).then(function (arrOfRes) {
+  Promise.all(promises).then(function(arrOfRes) {
     console.log(arrOfRes);
     //合并成一个arr, 同事判断是否开启语音        
     arrOfRes.forEach(res => {
@@ -97,7 +97,7 @@ function startBatchTest(files) {
       voiceopen = voiceopen || res.voiceopen;
     });
     $chatTester.doTest(alllines, voiceopen);
-  }).catch(function (reason) {
+  }).catch(function(reason) {
     console.error(reason);
   });
 }
@@ -113,10 +113,10 @@ function readLine(file) {
       let row = line.trim();
       if (row.length > 0) {
         switch (row) {
-          case "#voice-open":
+          case '#voice-open':
             voiceopen = true;
             break;
-          case "#voice-close":
+          case '#voice-close':
             voiceopen = false;
             break;
           default:
@@ -131,7 +131,7 @@ function readLine(file) {
         voiceopen: voiceopen
       });
     });
-  })
+  });
 
 }
 
@@ -140,10 +140,10 @@ function sendTextMessage() {
   // var url = 'http://121.40.16.14:7070/rsvpbot/general/chat?appid=huawei_sow2&userid=' + userid +
   //     '&token=rsvptest2017&question=';
   var msg = editArea.textContent.trim();
-  if (!!!msg) return;
+  if (!msg) return;
   createUserMessage(msg);
   editArea.innerHTML = '';
-
+  showLoadingBubble();
   if (!handleClientCommand(msg)) {
 
     var encodedMsg = encodeURI(msg);
@@ -152,15 +152,15 @@ function sendTextMessage() {
     var url =
       `${SETTINGS.ENDPOINT}?token=${SETTINGS.TOKEN}&appid=${SETTINGS.APPID}&userid=${SETTINGS.USERID}&question=${encodedMsg}`;
     console.log(url);
-    http.get(url, function (res) {
+    http.get(url, function(res) {
       //console.log(`STATUS: ${res.statusCode}`);
       //console.log(`HEADERS: ${JSON.stringify(res.headers)}`);
       //res.setEncoding('utf8');//加了这句后chunk会变成string类型
       var chunks = [];
-      res.on('data', function (chunk) {
+      res.on('data', function(chunk) {
         chunks.push(chunk);
       });
-      res.on("end", () => {
+      res.on('end', () => {
         var buffer = Buffer.concat(chunks).toString('utf8');
         console.log(buffer);
         handleResponse(buffer);
@@ -179,11 +179,11 @@ function sendTestMessageWithoutVoice(msg, resolve) {
   // var url = 'http://121.40.16.14:7070/rsvpbot/general/chat?appid=huawei_sow2&userid=' + userid +
   //     '&token=rsvptest2017&question=';
   //var msg = editArea.textContent.trim();
-  if (!!!msg) return;
+  if (!msg) return;
   createUserMessage(msg);
   editArea.innerHTML = '';
   let fromIndex = this.fromIndex;
-
+  showLoadingBubble();
   if (!handleClientCommand(msg)) {
 
     let encodedMsg = encodeURI(msg);
@@ -192,15 +192,15 @@ function sendTestMessageWithoutVoice(msg, resolve) {
     let url =
       `${SETTINGS.ENDPOINT}?token=${SETTINGS.TOKEN}&appid=${SETTINGS.APPID}&userid=${SETTINGS.USERID}&question=${encodedMsg}`;
     console.log(url);
-    let req = http.get(url, function (res) {
+    let req = http.get(url, function(res) {
       //console.log(`STATUS: ${res.statusCode}`);
       //console.log(`HEADERS: ${JSON.stringify(res.headers)}`);
       //res.setEncoding('utf8');//加了这句后chunk会变成string类型
       var chunks = [];
-      res.on('data', function (chunk) {
+      res.on('data', function(chunk) {
         chunks.push(chunk);
       });
-      res.on("end", () => {
+      res.on('end', () => {
         var buffer = Buffer.concat(chunks).toString('utf8');
         console.log(buffer);
         let p = handleResponse(buffer);
@@ -214,7 +214,7 @@ function sendTestMessageWithoutVoice(msg, resolve) {
         });
       });
     });
-    req.on("error", e => {
+    req.on('error', e => {
       console.error(`problem with request: ${e.message}`);
       handleResponse(JSON.stringify(e));
     });
@@ -222,11 +222,24 @@ function sendTestMessageWithoutVoice(msg, resolve) {
 
 }
 
+function showLoadingBubble() {
+  //start a loading bubble
+  createReponseMessage('', 'loading');
+}
+
+function deleteLoadingBubble() {
+  console.log('deleteLoadingBubble');
+  var loadingBubble = document.querySelector('.bottom-placeholder').previousElementSibling;
+  if (loadingBubble.querySelector('.loading-bubble')) {
+    loadingBubble.remove();
+  }
+}
+
 function sendTestMessage(msg, resolve, playVoice) {
   // var url = 'http://121.40.16.14:7070/rsvpbot/general/chat?appid=huawei_sow2&userid=' + userid +
   //     '&token=rsvptest2017&question=';
   //var msg = editArea.textContent.trim();
-  if (!!!msg) return;
+  if (!msg) return;
   if (!playVoice) {
     sendTestMessageWithoutVoice.call(this, msg, resolve);
     return;
@@ -240,8 +253,8 @@ function sendTestMessage(msg, resolve, playVoice) {
       per: 0,
       spd: 7,
       onended: () => {
-        console.log("user source.onended");
-
+        console.log('user source.onended');
+        showLoadingBubble();
         if (!handleClientCommand(msg)) {
 
           let encodedMsg = encodeURI(msg);
@@ -250,30 +263,31 @@ function sendTestMessage(msg, resolve, playVoice) {
           let url =
             `${SETTINGS.ENDPOINT}?token=${SETTINGS.TOKEN}&appid=${SETTINGS.APPID}&userid=${SETTINGS.USERID}&question=${encodedMsg}`;
           console.log(url);
-          let req = http.get(url, function (res) {
+          let req = http.get(url, function(res) {
             //console.log(`STATUS: ${res.statusCode}`);
             //console.log(`HEADERS: ${JSON.stringify(res.headers)}`);
             //res.setEncoding('utf8');//加了这句后chunk会变成string类型
             var chunks = [];
-            res.on('data', function (chunk) {
+            res.on('data', function(chunk) {
               chunks.push(chunk);
             });
-            res.on("end", () => {
+            res.on('end', () => {
               var buffer = Buffer.concat(chunks).toString('utf8');
               console.log(buffer);
+              //deleteLoadingBubble();//move into handleResponse() function
               let p = handleResponse(buffer);
               p.then(d => {
                 console.log(d.result);
                 if (playVoice) {
                   if (d.text && d.text.length > 0) {
                     baidu.tts(d.text, {
-                      per: 2,
+                      per: 4,
                       spd: 5,
                       onended: () => {
-                        console.log("dodo source.onended");
+                        console.log('dodo source.onended');
                         if ('function' === typeof resolve) resolve(++fromIndex);
                       }
-                    })
+                    });
                   }
                 }
                 conversation.push({
@@ -283,21 +297,21 @@ function sendTestMessage(msg, resolve, playVoice) {
               });
             });
           });
-          req.on("error", e => {
+          req.on('error', e => {
             console.error(`problem with request: ${e.message}`);
             handleResponse(JSON.stringify(e));
           });
         }
 
       }
-    })
+    });
   }
 }
 
 function rollbackNlog(rollbackN) {
   var ds = conversation.slice(-rollbackN);
   return ds.map(v => {
-    return `Q: ${v.q}\nA: ${v.a}`
+    return `Q: ${v.q}\nA: ${v.a}`;
   }).join('\n----------------------------------------------------\n');
 }
 
@@ -305,7 +319,7 @@ function handleClientCommand(msg) {
   var result = false;
   if (msg.indexOf('jira') == 0) {
     if (!SETTINGS.JIRA_USERNAME || !SETTINGS.JIRA_PASSWORD || !SETTINGS.JIRA_PROJECTID) {
-      createReponseMessage("请先在“设置”中填写你的jira帐号、密码及项目id", 'text');
+      createReponseMessage('请先在“设置”中填写你的jira帐号、密码及项目id', 'text');
       return true;
     }
     let ss1 = splitAssignee(msg.substring(4).trim());
@@ -317,7 +331,7 @@ function handleClientCommand(msg) {
       if (summary.trim().length > 0) {
         var desc = rollbackNlog(rollbackN);
         new Reporter(SETTINGS.JIRA_USERNAME, SETTINGS.JIRA_PASSWORD, SETTINGS.JIRA_PROJECTID)
-          .report(summary, desc, "3", assignee);
+          .report(summary, desc, '3', assignee);
       }
       result = true;
     }
@@ -339,7 +353,7 @@ function splitNS(s) {
   if (r) {
     return [r[1], r[2]];
   } else {
-    return ["1", s]
+    return ['1', s];
   }
 }
 /**
@@ -352,23 +366,23 @@ function splitAssignee(s) {
   if (r) {
     return [r[1], r[2]];
   } else {
-    return ["", s]
+    return ['', s];
   }
 }
 let Assignees = {
-  "卢春尉": "lcw",
-  "娄旭芳": "lxf",
-  "吴志勇": "wzy",
-  "王智璋": "wzz",
-  "刘晓金": "lxj",
-  "陈梦域": "cmy",
-  "岑咪超": "cmc",
-  "黎佳骏": "ljj",
-  "何佳莉": "hjl",
-  "毛卓予": "mzy",
-  "黄燕": "hy",
-  "戴良智": "dlz"
-}
+  '卢春尉': 'lcw',
+  '娄旭芳': 'lxf',
+  '吴志勇': 'wzy',
+  '王智璋': 'wzz',
+  '刘晓金': 'lxj',
+  '陈梦域': 'cmy',
+  '岑咪超': 'cmc',
+  '黎佳骏': 'ljj',
+  '何佳莉': 'hjl',
+  '毛卓予': 'mzy',
+  '黄燕': 'hy',
+  '戴良智': 'dlz'
+};
 
 function mapAssignee(s) {
   let a = Assignees[s];
@@ -380,7 +394,7 @@ function isNewMsg() {
   var r = false;
   var t = new Date();
   if (t1 == -1 || (t - t1) > 60000) {
-    r = true
+    r = true;
   }
   t1 = t;
   return r;
@@ -389,7 +403,7 @@ function isNewMsg() {
 function createUserMessage(msg) {
   var isNew = isNewMsg();
   var div = document.createElement('div');
-  div.className = "ng-scope";
+  div.className = 'ng-scope';
   //                    <div ng-repeat="message in chatContent" class="ng-scope">
   var chatContent =
     `
@@ -397,8 +411,8 @@ function createUserMessage(msg) {
                     <div class="clearfix" message-directive="">
                         <div ng-switch="" on="message.MsgType" style="overflow: hidden;" >
                             <div ng-switch-default="" class="message ng-scope me" >
-                                <div class="message_system ng-scope" style="display:${!!isNew?'block':'none'}">
-                                    <div class="content ng-binding ng-scope">${(new Date()).pattern("HH:mm")}</div>
+                                <div class="message_system ng-scope" style="display:${isNew?'block':'none'}">
+                                    <div class="content ng-binding ng-scope">${(new Date()).pattern('HH:mm')}</div>
                                 </div>
                                 <img class="avatar" src="./img/mengbao.jpg" mm-src="./img/mengbao.jpg" title="宝宝" ng-click="showProfile($event,message.MMActualSender)">
                                 <div class="content">
@@ -461,6 +475,14 @@ function buildMessageByType(msg, type, options) {
                     </div>
                 `;
       break;
+    case 'loading': //text
+      res =
+        `
+                    <div class="plain loading-bubble">
+                        <div class="loader loader-3"><div class="dot dot1"></div><div class="dot dot2"></div><div class="dot dot3"></div></div>
+                    </div>
+                    `;
+      break;
     case 'error': //text
       res =
         `
@@ -489,7 +511,7 @@ function createReponseMessage(msg, type, options) {
   var type = type || 'text';
   var typedMessage = buildMessageByType(msg, type, options);
   var div = document.createElement('div');
-  div.className = "ng-scope";
+  div.className = 'ng-scope';
   //                    <div ng-repeat="message in chatContent" class="ng-scope">
   var chatContent =
     `
@@ -515,7 +537,7 @@ function createReponseMessage(msg, type, options) {
   ph.parentNode.insertBefore(div, ph);
   scrollBottom(scrollContent);
   return new Promise((rs, rj) => {
-    rs('createReponseMessage done')
+    rs('createReponseMessage done');
   });
 }
 /**
@@ -537,19 +559,19 @@ function getExt(url) {
 function previewImg(url) {
   let win = new BrowserWindow({
     //frame: false,
-  })
-  win.on('close', function () {
-    win = null
-  })
-  win.once('ready-to-show', () => win.show())
-  win.loadURL(url)
+  });
+  win.on('close', function() {
+    win = null;
+  });
+  win.once('ready-to-show', () => win.show());
+  win.loadURL(url);
 
-  let contents = win.webContents
+  let contents = win.webContents;
   let css_close =
-    `#close { color: white;background:black; opacity: 0.7;position: absolute;bottom: 20px;left: 50%;transform: translateX(-50%);font-size: 12px;text-decoration: none;}`
-  let close_btn = `<a id="close" href="javascript:window.close()">关闭此窗体</a>`
+    '#close { color: white;background:black; opacity: 0.7;position: absolute;bottom: 20px;left: 50%;transform: translateX(-50%);font-size: 12px;text-decoration: none;}';
+  let close_btn = '<a id="close" href="javascript:window.close()">关闭此窗体</a>';
   let scriptx =
-    `var s=document.createElement('style');s.innerHTML='${css_close}';document.head.appendChild(s);document.body.innerHTML+='${close_btn}';`
+    `var s=document.createElement('style');s.innerHTML='${css_close}';document.head.appendChild(s);document.body.innerHTML+='${close_btn}';`;
   contents.on('did-finish-load', () => {
     contents.executeJavaScript(
       scriptx,
@@ -557,17 +579,19 @@ function previewImg(url) {
         //console.log(result)
       });
 
-  })
+  });
 
 
 }
 
 function handleResponse(response) {
+  //if there is a loading bubble, delete it before create new response bubble
+  deleteLoadingBubble();
   //console.log(typeof response);
   return new Promise((resolve, reject) => {
     let p = null;
     let res;
-    let text = "";
+    let text = '';
     try {
       res = JSON.parse(response);
     } catch (error) {
@@ -577,11 +601,11 @@ function handleResponse(response) {
     if (!res || !res.stage) {
       p = createReponseMessage(response, 'error');
     } else {
-      res.stage.forEach(function (stage) {
+      res.stage.forEach(function(stage) {
         //console.log(stage);
         if (stage.message) {
           p = createReponseMessage(stage.message, 'text');
-          text += "。" + stage.message; //加句号是未来增加发音停顿
+          text += '。' + stage.message; //加句号是未来增加发音停顿
         }
         if (stage.image) {
           p = createReponseMessage(stage.image, 'image');
@@ -627,14 +651,14 @@ function timeout() {
   var url =
     `${timeoutEndPoint}?token=${SETTINGS.TOKEN}&appid=${SETTINGS.APPID}&userid=${SETTINGS.USERID}`;
   console.log(url);
-  http.get(url, function (res) {
+  http.get(url, function(res) {
     //console.log(`STATUS: ${res.statusCode}`);
     //console.log(`HEADERS: ${JSON.stringify(res.headers)}`);
     res.setEncoding('utf8');
-    res.on('data', function (response) {
+    res.on('data', function(response) {
       console.log('timeout, ', response);
       if (response.indexOf('"status":-1') == -1) {
-        handleResponse(response)
+        handleResponse(response);
       }
     });
   });
@@ -642,10 +666,10 @@ function timeout() {
 
 function scrollBottom(elm) { //$('.box_bd.scroll-content')
   var $elm = $(elm);
-  $elm.scrollTop(elm.scrollHeight - $elm.height())
+  $elm.scrollTop(elm.scrollHeight - $elm.height());
 }
 
-jQuery(document).ready(function () {
+jQuery(document).ready(function() {
   window.dynamicScrollbar = jQuery('.scrollbar-dynamic').scrollbar();
 });
 

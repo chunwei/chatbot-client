@@ -5,8 +5,8 @@ class ChatTester {
   constructor() {
     console.log(typeof myR.sendTestMessage);
   }
-  log(x) { console.log(x) }
-  send(msg) { myR.sendTestMessage(msg) }
+  log(x) { console.log(x); }
+  send(msg) { myR.sendTestMessage(msg); }
   doTest(msgs, playVoice) {
     //outter Promise
     return new Promise((rs, rj) => {
@@ -18,13 +18,13 @@ class ChatTester {
           if (i < c) {
             myR.sendTestMessage.call({ fromIndex: i }, msgs[i], resolve, playVoice);
           } else {
-            reject("test over at i=" + i);
+            reject('test over at i=' + i);
           }
         });
         p.then(d => talk(d)).catch(e => {
           console.log(e);
-          rs(e)
-        });
+          rs(e);
+        }).catch((err) => { rj(err); });
       }
       talk(0);
     });

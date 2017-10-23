@@ -1,0 +1,58 @@
+.settings_panel {
+  display: none;
+  background: #8fbc8f;
+  padding: 15px 0;
+}
+
+.settings_panel label {
+  width: 50px;
+  display: inline-block;
+  text-align: right;
+  padding-right: 10px;
+}
+
+.settings_panel input {
+  width: 66%;
+}
+
+pre#editArea {
+  background: #f9f9f9;
+  border: solid 1px #ddd;
+}
+
+pre#editArea:focus {
+  background: white;
+  border: solid 1px gold;
+}
+
+.plain .js_message_plain.error {
+  color: red;
+}
+
+.bubble.bubble_primary {
+  background-color: #2196f3;
+}
+
+.bubble.bubble_default {
+  background-color: #4fc3f7;
+}
+
+.bubble_cont .plain {
+  padding: 9px 13px;
+  color: #fff;
+}
+
+.bubble {
+  max-width: 500px;
+  min-height: 1em;
+  display: inline-block;
+  vertical-align: top;
+  position: relative;
+  text-align: left;
+  font-size: 14px;
+  border-radius: 3px;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 8px;
+  margin: 0 10px 10px 10px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.16);
+}

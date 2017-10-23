@@ -1,60 +1,111 @@
-const electron = require("electron");
-const { app, BrowserWindow, ipcMain, dialog } = electron;
-const path = require("path");
-const url = require("url");
+const electron = require('electron');
+const {
+  app,
+  BrowserWindow,
+  ipcMain,
+} = electron;
+const path = require('path');
+const glob = require('glob');
+const url = require('url');
+const autoUpdater = require('./auto-updater');
 
-ipcMain.on("toggleDevTools", function (event, arg) {
+const debug = /--debug/.test(process.argv[2]);
+
+if (process.mas) app.setName('ChatBot');
+
+ipcMain.on('toggleDevTools', function() {
   win.webContents.toggleDevTools();
 });
-ipcMain.on('open-file-dialog', function (event) {
-  dialog.showOpenDialog({
-    properties: ['openFile', 'multiSelections'],
-    filters: [
-      { name: '测试脚本', extensions: ['txt'] },
-      { name: 'All Files', extensions: ['*'] }
-      ]
-  }, function (files) {
-    if (files) event.sender.send('selected-files', files)
-  })
-})
 
-//init win
+//open-file.js
+
+// init win
 let win;
+/**
+ * initialize app
+ */
+function initialize() {
+  loadMainModule();
 
-function createWindow() {
-  const screenSize = electron.screen.getPrimaryDisplay().workAreaSize;
-  //console.log(electron.screen.getPrimaryDisplay());
-  //Create browser window
-  win = new BrowserWindow({
-    width: 580,
-    height: screenSize.height,
-    icon: path.join(__dirname, "img/icon.png")
+  /**
+   * creante main windows
+   */
+  function createWindow() {
+    const screenSize = electron.screen.getPrimaryDisplay().workAreaSize;
+    // console.log(electron.screen.getPrimaryDisplay());
+    // Create browser window
+    win = new BrowserWindow({
+      show: false,
+      width: 580,
+      height: screenSize.height,
+      icon: path.join(__dirname, 'img/icon.png'),
+    });
+    win.on('ready-to-show', function() {
+      win.show();
+      win.focus();
+    });
+    // Load index.html
+    win.loadURL(
+      url.format({
+        pathname: path.join(__dirname, 'main.html'),
+        protocol: 'file',
+        slashes: true,
+      })
+    );
+
+    // Launch fullscreen with DevTools open, usage: npm run debug
+    if (debug) {
+      win.webContents.openDevTools();
+      win.maximize();
+      require('devtron').install();
+    }
+
+    win.on('closed', () => {
+      win = null;
+    });
+  }
+
+  //app.setPath('userData', path.join(__dirname, 'appData'));
+
+  app.on('ready', function() {
+    createWindow();
+    autoUpdater.initialize();
   });
-  //Load index.html
-  win.loadURL(
-    url.format({
-      pathname: path.join(__dirname, "main.html"),
-      protocol: "file",
-      slashes: true
-    })
-  );
 
-  //Open devtools
-  //win.webContents.openDevTools();
-
-  win.on("closed", () => {
-    win = null;
+  app.on('window-all-closed', () => {
+    if (process.platform !== 'darwin') {
+      app.quit();
+    }
   });
 }
 
-app.setPath("userData", path.join(__dirname, "appData"));
+/**
+ * Require each JS file in the main-process dir
+ */
+function loadMainModule() {
+  let files = glob.sync(path.join(__dirname, 'main-process/**/*.js'));
+  files.forEach(function(file) {
+    require(file);
+  });
+  autoUpdater.updateMenu();
+}
 
-app.on("ready", function () {
-  createWindow();
-});
-
-app.on("window-all-closed", () => {
-  if (process.platform !== "darwin") {
+// Handle Squirrel on Windows startup events
+switch (process.argv[1]) {
+  case '--squirrel-install':
+    autoUpdater.createShortcut(function() {
+      app.quit();
+    });
+    break;
+  case '--squirrel-uninstall':
+    autoUpdater.removeShortcut(function() {
+      app.quit();
+    });
+    break;
+  case '--squirrel-obsolete':
+  case '--squirrel-updated':
     app.quit();
-  }
-});
+    break;
+  default:
+    initialize();
+}

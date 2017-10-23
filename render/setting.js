@@ -1,28 +1,29 @@
+const uuid = require('../js/utils').uuid;
 var SETTINGS;
 
 function saveSetting(settings) {
   window.localStorage.setItem('SETTINGS',
-    JSON.stringify(settings))
+    JSON.stringify(settings));
 }
 
 function loadSetting() {
   if (!window.localStorage.getItem('SETTINGS')) {
     var defaultSETTINGS = {
-      ENDPOINT: "http://121.40.16.14:7070/rsvpbot/general/chat",
-      TOKEN: "rsvptest2017",
+      ENDPOINT: 'http://121.40.16.14:7070/rsvpbot/general/chat',
+      TOKEN: 'rsvptest2017',
       USERID: uuid(12, 16),
-      APPID: "huawei_sow2",
+      APPID: 'huawei_sow2',
       JIRA_USERNAME: '',
       JIRA_PASSWORD: '',
       JIRA_PROJECTID: '11206'
-    }
+    };
     saveSetting(defaultSETTINGS);
   }
   SETTINGS = JSON.parse(window.localStorage.getItem('SETTINGS'));
   //token是后期独立出来的，早期本可能没有保存
   //ENDPOINT旧格式中需去掉token
   if (!SETTINGS.TOKEN) {
-    SETTINGS.TOKEN = "rsvptest2017";
+    SETTINGS.TOKEN = 'rsvptest2017';
     SETTINGS.ENDPOINT = SETTINGS.ENDPOINT.substring(0, SETTINGS.ENDPOINT.lastIndexOf('?'));
   }
   SETTINGS.JIRA_USERNAME = SETTINGS.JIRA_USERNAME || '';
@@ -41,7 +42,7 @@ function showSettings() {
     SETTINGS.JIRA_USERNAME = document.getElementById('settings_jira_username').value;
     SETTINGS.JIRA_PASSWORD = document.getElementById('settings_jira_password').value;
     Object.keys(SETTINGS).forEach(key => {
-      SETTINGS[key] = SETTINGS[key].trim()
+      SETTINGS[key] = SETTINGS[key].trim();
     });
     saveSetting(SETTINGS);
     document.getElementById('settings_panel').style.display = 'none';
@@ -56,6 +57,7 @@ function showSettings() {
     document.getElementById('settings_panel').style.display = 'block';
   }
 }
-
-$('.showSettings').on('click', showSettings)
+document.body.querySelectorAll('.showSettings').forEach((el) => {
+  el.addEventListener('click', showSettings);
+});
 module.exports = { SETTINGS, showSettings, loadSetting, saveSetting };
