@@ -9,6 +9,8 @@
   "scripts": {
     "start": "electron .",
     "dev": "electron . --debug",
+    "gan": "node ./render/gan.js",
+    "gan-debug": "set DEBUG = \"*\" && node ./render/gan.js",
     "package": "npm-run-all pack:*",
     "pack-win-mac": "electron-packager ./ chatbot --out ../dist --overwrite --asar --platform=win32,darwin --arch=x64,ia32 --ignore=./appData --icon=./img/icon/icon.ico",
     "pack-all": "electron-packager ./ --out ../dist --all --overwrite --asar --ignore=./appData --icon=./img/icon/icon.ico",
@@ -30,15 +32,19 @@
   "author": "luchunwei",
   "license": "MIT",
   "dependencies": {
-    "glob": "^7.1.2",
-    "baidu-aip-sdk": "^1.4.0"
+    "baidu-aip-sdk": "^1.4.0",
+    "debug": "^3.1.0",
+    "glob": "^7.1.2"
   },
   "devDependencies": {
     "devtron": "^1.4.0",
     "electron": "^1.8.1",
     "electron-packager": "^9.1.0",
     "electron-winstaller": "^2.6.3",
+    "eslint": "^4.9.0",
     "eslint-config-google": "^0.9.1",
+    "jasmine": "^2.8.0",
+    "jasmine-spec-reporter": "^4.2.1",
     "npm-run-all": "^4.1.1"
   },
   "build": {
