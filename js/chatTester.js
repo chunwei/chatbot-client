@@ -7,7 +7,7 @@ class ChatTester {
       let c = msgs.length;
       //inner Promise
       function talk(i) {
-        console.log(`test i=${i+1} of ${c}`);
+        console.debug(`test i=${i+1} of ${c}`);
         let p = new Promise((resolve, reject) => {
           if (i < c) {
             sendTestMessage.call({ fromIndex: i }, msgs[i], resolve, playVoice);
@@ -16,7 +16,7 @@ class ChatTester {
           }
         });
         p.then(d => talk(d)).catch(e => {
-          console.log(e);
+          console.error(e);
           rs(e)
         });
       }

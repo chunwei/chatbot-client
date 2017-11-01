@@ -13,13 +13,21 @@ const readline = require('readline');
 const path = require('path');
 const fs = require('fs');
 
-const { SETTINGS /* , showSettings, loadSetting, saveSetting  */ } = require('./render/setting');
+const AopLog = require('./js/aop.Log');
+AopLog.setTargetView('div.cw-logview');
+const { SETTINGS, showSettings /* , loadSetting, saveSetting */ } = require('./render/setting');
+const jsonFormatter = require('./render/jsonFormatter');
 const baidu = require('./js/baiduTTS');
 const Reporter = require('./render/jirareporter');
 const $chatTester = require('./render/chatTester');
-if ($chatTester) {
+const TaskChatTester = require('./js/task.chattester');
+
+require('./js/imports');
+let { debugActionsWidget, tmgr } = require('./render/debug-actions-widget');
+
+/* if ($chatTester) {
   console.log('$chatTester ready.');
-}
+} */
 var conversation = []; //保存聊天记录 [{q:string,a:jsonstring},]
 var t1 = -1; //计时器
 //var userid = uuid(12, 16); //like '012345678999';
@@ -34,12 +42,72 @@ const selectFileBtn = document.getElementById('selectFileBtn');
 selectFileBtn.addEventListener('click', function() {
   ipcRenderer.send('open-file-dialog');
 });
+const scheduleBtn = document.getElementById('scheduleBtn');
+
+scheduleBtn.addEventListener('click', function() {
+  ipcRenderer.send('open-information-dialog');
+});
+
+const showLogViewCMBtn = document.getElementById('showLogViewCMBtn');
+
+showLogViewCMBtn.addEventListener('click', function() {
+  ipcRenderer.send('show-logview-context-menu');
+});
 
 ipcRenderer.on('selected-files', function(event, files) {
+  debugActionsWidget.classList.remove('hidden');
   let filenames = files.map(file => path.parse(file).name);
-  document.getElementById('selected-file').innerHTML = `测试脚本: ${filenames}`;
-  //startBatchTest(files);
-  testFiles1by1(files);
+  document.getElementById('selected-file').innerHTML = `脚本: ${filenames}`;
+  startBatchTest(files);
+  //$chatTester.testFiles1by1(files);
+  //tmgr.setTask(task);
+  //tmgr.start();
+});
+ipcRenderer.on('show-settings', function() {
+  showSettings();
+});
+ipcRenderer.on('ubcm-start-from-here', function(e, iid) {
+  console.log(iid);
+  //保留选中句子
+  let q = conversation[iid].q;
+  //清除对话列表，包括dom和数据
+  let messageitem = $('.conversation div[inputid=' + iid + ']').parents('.message_item').first();
+  messageitem.nextUntil('.bottom-placeholder').remove(); //  .css({ 'color': 'red', 'border': '2px solid green' });
+  messageitem.remove();
+  conversation.splice(iid);
+
+  //这句话重发
+  sendTestMessageWithoutVoice(q);
+});
+
+ipcRenderer.on('ubcm-say-it-again', function(e, iid) {
+  console.log(iid);
+  let q = conversation[iid].q;
+  sendTestMessageWithoutVoice(q);
+});
+
+ipcRenderer.on('logcm-clear-log', function(e) {
+  AopLog.clear();
+});
+ipcRenderer.on('logcm-switch-wordwrap', function(e) {
+  AopLog.toggleWrap();
+});
+$('.conversation').on('contextmenu', '.bubble.bubble_primary.right', function() {
+  let iid = $(this).attr('inputid');
+  console.debug('contextmenu on %s', iid);
+  ipcRenderer.send('show-user-bubble-context-menu', iid);
+});
+//每句对话监听点击
+$('.conversation').on('click', '.bubble', function() {
+  let rid = $(this).attr('responseid');
+  //console.log(rid);
+  let qa = conversation[rid];
+  if (rid && qa) {
+    var json = jsonFormatter.format({ input: qa.q, response: JSON.parse(qa.a) });
+    $('.cw-inspectorview-json').html(json);
+  } else {
+    $('.cw-inspectorview-json').html($(this).text().trim());
+  }
 });
 
 btn_send.addEventListener('click', function() {
@@ -63,7 +131,7 @@ function testFiles1by1(files) {
   let c = files.length;
 
   function testOneFile(i) {
-    console.log(`test file i=${i+1} of ${c}`);
+    console.debug(`test file i=${i+1} of ${c}`);
     let file = files[i];
     readLine(file).then(res => {
       $chatTester.doTest(res.lines, res.voiceopen).then(
@@ -72,13 +140,29 @@ function testFiles1by1(files) {
           if (i < c) {
             testOneFile(i);
           } else {
-            console.log('test file over at i=' + i);
+            console.trace('test file over at i=' + i);
           }
         }
       );
     });
   }
   testOneFile(0);
+}
+
+function startTask(alllines, voiceopen) {
+  let task = new TaskChatTester();
+  task.setMessages(alllines);
+  task.step = function() {
+    let self = task;
+    return new Promise((resolve, reject) => {
+      let msg = self.messages[self.curStep];
+      //console.log(msg);
+      //resolve(1 + self.curStep);
+      sendTestMessage.call({ fromIndex: self.curStep }, msg, resolve, voiceopen);
+    });
+  };
+  tmgr.setTask(task);
+  tmgr.start();
 }
 
 function startBatchTest(files) {
@@ -90,13 +174,15 @@ function startBatchTest(files) {
   });
   Promise.all(promises).then(function(arrOfRes) {
     console.log(arrOfRes);
-    //合并成一个arr, 同事判断是否开启语音        
+    //合并成一个arr, 同时判断是否开启语音        
     arrOfRes.forEach(res => {
       alllines = alllines.concat(res.lines);
       //只最后载入的文件开启了就开启
       voiceopen = voiceopen || res.voiceopen;
     });
-    $chatTester.doTest(alllines, voiceopen);
+    //让任务管理器来接管
+    //$chatTester.doTest(alllines, voiceopen);
+    startTask(alllines, voiceopen);
   }).catch(function(reason) {
     console.error(reason);
   });
@@ -151,7 +237,7 @@ function sendTextMessage() {
 
     var url =
       `${SETTINGS.ENDPOINT}?token=${SETTINGS.TOKEN}&appid=${SETTINGS.APPID}&userid=${SETTINGS.USERID}&question=${encodedMsg}`;
-    console.log(url);
+    console.log('GET %s', url);
     http.get(url, function(res) {
       //console.log(`STATUS: ${res.statusCode}`);
       //console.log(`HEADERS: ${JSON.stringify(res.headers)}`);
@@ -191,7 +277,7 @@ function sendTestMessageWithoutVoice(msg, resolve) {
 
     let url =
       `${SETTINGS.ENDPOINT}?token=${SETTINGS.TOKEN}&appid=${SETTINGS.APPID}&userid=${SETTINGS.USERID}&question=${encodedMsg}`;
-    console.log(url);
+    console.log('GET %s', url);
     let req = http.get(url, function(res) {
       //console.log(`STATUS: ${res.statusCode}`);
       //console.log(`HEADERS: ${JSON.stringify(res.headers)}`);
@@ -228,7 +314,7 @@ function showLoadingBubble() {
 }
 
 function deleteLoadingBubble() {
-  console.log('deleteLoadingBubble');
+  //console.log('deleteLoadingBubble');
   var loadingBubble = document.querySelector('.bottom-placeholder').previousElementSibling;
   if (loadingBubble.querySelector('.loading-bubble')) {
     loadingBubble.remove();
@@ -253,7 +339,7 @@ function sendTestMessage(msg, resolve, playVoice) {
       per: 0,
       spd: 7,
       onended: () => {
-        console.log('user source.onended');
+        console.log('user voice.onended');
         showLoadingBubble();
         if (!handleClientCommand(msg)) {
 
@@ -262,7 +348,7 @@ function sendTestMessage(msg, resolve, playVoice) {
 
           let url =
             `${SETTINGS.ENDPOINT}?token=${SETTINGS.TOKEN}&appid=${SETTINGS.APPID}&userid=${SETTINGS.USERID}&question=${encodedMsg}`;
-          console.log(url);
+          console.log('GET %s', url);
           let req = http.get(url, function(res) {
             //console.log(`STATUS: ${res.statusCode}`);
             //console.log(`HEADERS: ${JSON.stringify(res.headers)}`);
@@ -284,7 +370,7 @@ function sendTestMessage(msg, resolve, playVoice) {
                       per: 4,
                       spd: 5,
                       onended: () => {
-                        console.log('dodo source.onended');
+                        console.log('dodo voice.onended');
                         if ('function' === typeof resolve) resolve(++fromIndex);
                       }
                     });
@@ -403,25 +489,23 @@ function isNewMsg() {
 function createUserMessage(msg) {
   var isNew = isNewMsg();
   var div = document.createElement('div');
-  div.className = 'ng-scope';
-  //                    <div ng-repeat="message in chatContent" class="ng-scope">
+  div.className = 'message_item';
   var chatContent =
     `
 
-                    <div class="clearfix" message-directive="">
-                        <div ng-switch="" on="message.MsgType" style="overflow: hidden;" >
-                            <div ng-switch-default="" class="message ng-scope me" >
-                                <div class="message_system ng-scope" style="display:${isNew?'block':'none'}">
-                                    <div class="content ng-binding ng-scope">${(new Date()).pattern('HH:mm')}</div>
+                    <div class="clearfix">
+                        <div style="overflow: hidden;">
+                            <div class="message me" >
+                                <div class="message_system" style="display:${isNew?'block':'none'}">
+                                    <div class="content">${(new Date()).pattern('HH:mm')}</div>
                                 </div>
-                                <img class="avatar" src="./img/mengbao.jpg" mm-src="./img/mengbao.jpg" title="宝宝" ng-click="showProfile($event,message.MMActualSender)">
+                                <img class="avatar" src="./img/mengbao.jpg" title="宝宝">
                                 <div class="content">
-                                    <div class="bubble js_message_bubble ng-scope bubble_primary right">
-
+                                    <div class="bubble js_message_bubble bubble_primary right" inputid=${conversation.length}>
                                         <!--纯文本消息-->
-                                        <div class="bubble_cont ng-scope">
+                                        <div class="bubble_cont">
                                             <div class="plain">
-                                                <pre class="js_message_plain ng-binding" ng-bind-html="message.MMActualContent">${msg}</pre>
+                                                <pre class="js_message_plain">${msg}</pre>
                                             </div>
                                         </div>
                                     </div>
@@ -511,18 +595,17 @@ function createReponseMessage(msg, type, options) {
   var type = type || 'text';
   var typedMessage = buildMessageByType(msg, type, options);
   var div = document.createElement('div');
-  div.className = 'ng-scope';
-  //                    <div ng-repeat="message in chatContent" class="ng-scope">
+  div.className = 'message_item';
   var chatContent =
     `
 
-                    <div class="clearfix" message-directive="">
-                                    <div ng-switch="" on="message.MsgType" style="overflow: hidden;">
-                                        <div ng-switch-default="" class="message ng-scope you">
-                                            <img class="avatar" src="./img/doudou.png" mm-src="./img/doudou.png" title="豆豆" ng-click="showProfile($event,message.MMActualSender)">
+                    <div class="clearfix">
+                                    <div style="overflow: hidden;">
+                                        <div class="message you">
+                                            <img class="avatar" src="./img/doudou.png" mm-src="./img/doudou.png" title="豆豆">
                                             <div class="content">
-                                                <div class="bubble js_message_bubble ng-scope bubble_default left" >
-                                                    <div class="bubble_cont ng-scope">
+                                                <div class="bubble js_message_bubble bubble_default left" responseid=${conversation.length}>
+                                                    <div class="bubble_cont">
                                                         ${typedMessage}
                                                     </div>
                                                 </div>
@@ -650,15 +733,17 @@ function timeout() {
   var timeoutEndPoint = s.substring(0, s.lastIndexOf('/')) + '/timeout';
   var url =
     `${timeoutEndPoint}?token=${SETTINGS.TOKEN}&appid=${SETTINGS.APPID}&userid=${SETTINGS.USERID}`;
-  console.log(url);
+  console.log('GET %s', url);
   http.get(url, function(res) {
     //console.log(`STATUS: ${res.statusCode}`);
     //console.log(`HEADERS: ${JSON.stringify(res.headers)}`);
     res.setEncoding('utf8');
     res.on('data', function(response) {
-      console.log('timeout, ', response);
       if (response.indexOf('"status":-1') == -1) {
+        console.log('timeout triggered, ', response);
         handleResponse(response);
+      } else {
+        console.error('timeout triggered, service not implement ', response);
       }
     });
   });
@@ -671,6 +756,23 @@ function scrollBottom(elm) { //$('.box_bd.scroll-content')
 
 jQuery(document).ready(function() {
   window.dynamicScrollbar = jQuery('.scrollbar-dynamic').scrollbar();
+
+  console.log('app ready');
+
+  var p = new Promise((rv, rj) => {
+    //const jsonFormatter = require('./render/jsonFormatter');
+    //var json = jsonFormatter.format({ a: "good", b: 1, c: true, d: false, e: { obj: "obj", array: [1, 2, 3] } });
+    //let my_settings = window.localStorage.getItem('SETTINGS');
+    if (SETTINGS) {
+      var json = jsonFormatter.format(SETTINGS);
+      $('.cw-inspectorview-json').html(json);
+      rv('done');
+    }
+  });
+  p.then(d => {
+    $('.cw-inspectorview-json').prepend('<p>点菜单 编辑 -> 设置 (快捷键ctrl+s) 配置服务 </p><p>当前配置如下：</p>');
+  });
+
 });
 
 function handleWindowKeyEvent(event) {

@@ -7,111 +7,154 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="css/nativize.css">
   <link href="css/weixin.css" rel="stylesheet">
+  <link href="css/split-pane.css" rel="stylesheet">
+  <link rel='stylesheet' href='css/monaco-workbench.css'>
   <link href="css/style.css" rel="stylesheet">
+  <link rel="import" href="template/debug-actions-widget.html">
   <script src='js/utils.js'></script>
   <script src='js/datetime.js'></script>
 
   <script src="js/jquery.js"></script>
   <script src="js/jquery.scrollbar.js"></script>
+  <script src="js/jquery.split-pane.js"></script>
+
 </head>
 
 <body class='loaded'>
   <div class="main">
-    <div class="main_inner" ng-right-click="showContextMenu($event)">
-      <div ui-view="contentView" style="height:100%;" class="ng-scope">
-        <div id="chatArea" class="box chat ng-scope">
+    <div class="main_inner">
+      <div class="contentView" style="height:100%;">
+        <div class="split-pane fixed-left">
+          <div class="split-pane-component" id="left-component">
+
+            <div id="chatArea" class="box chat">
 
 
 
-          <!--BEGIN HD-->
-          <div class="box_hd">
-            <!--<a class="ext web_wechat_addfriend" href="javascript:;" ng-click="showChatRoomMembers($event)" ng-show="currentContact.isRoomContact()" title="成员"></a>-->
-            <!--<a class="ext web_wechat_addfriend" href="javascript:;" ng-click="showProfile($event)" ng-show="!currentContact.isRoomContact()" title="Profile"></a>-->
-            <div id="chatRoomMembersWrap"></div>
-            <div class="title_wrap">
-              <div class="title poi showSettings" id='showSettingBtn'>
-                <a class="title_name ng-binding">设置</a>
-                <!-- ngIf: currentContact.MemberList.length -->
-                <i class="web_wechat_down_icon"></i>
+              <!--BEGIN HD-->
+              <div class="box_hd">
+                <!--<a class="ext web_wechat_addfriend" href="javascript:;" ng-click="showChatRoomMembers($event)" ng-show="currentContact.isRoomContact()" title="成员"></a>-->
+                <!--<a class="ext web_wechat_addfriend" href="javascript:;" ng-click="showProfile($event)" ng-show="!currentContact.isRoomContact()" title="Profile"></a>-->
+                <div id="chatRoomMembersWrap"></div>
+                <div class="title_wrap">
+                  <a class="web_wechat_add showSettings" href="javascript:;" title="工具按钮预留" style="position: absolute;right: 10px;top: 0;"></a>
+                  <div class="title poi showSettings" style='display:none' id='showSettingBtn'>
+                    <a class="title_name ng-binding">设置</a>
+                    <!-- ngIf: currentContact.MemberList.length -->
+                    <i class="web_wechat_down_icon"></i>
+                  </div>
+                  <div class="settings_panel" id='settings_panel'>
+                    <p>
+                      <label for='settings_endpoint'>url:</label>
+                      <input type="text" id='settings_endpoint' />
+                    </p>
+                    <p>
+                      <label for='settings_token'>token:</label>
+                      <input type="text" id='settings_token' />
+                    </p>
+                    <p>
+                      <label for='settings_appid'>appid:</label>
+                      <input type="text" id='settings_appid' />
+                    </p>
+                    <p>
+                      <label for='settings_userid'>userid:</label>
+                      <input type="text" id='settings_userid' />
+                    </p>
+                    <p>Jira设置:</p>
+                    <p>项目id : sow1填 11205， sow2填 11206</p>
+                    <p>
+                      <label for='settings_jira_projectid'>项目id:</label>
+                      <input type="text" id='settings_jira_projectid' />
+                    </p>
+                    <p>
+                      <label for='settings_jira_username'>帐号:</label>
+                      <input type="text" id='settings_jira_username' />
+                    </p>
+                    <p>
+                      <label for='settings_jira_password'>密码:</label>
+                      <input type="text" id='settings_jira_password' />
+                    </p>
+                    <div class="showSettings saveBtn">
+                      <a class="title_name ng-binding">保存 & 收起</a>
+                      <i class="web_wechat_up_icon"></i>
+                    </div>
+                  </div>
+                </div>
+
               </div>
-              <div class="settings_panel" id='settings_panel'>
-                <p>
-                  <label for='settings_endpoint'>url:</label>
-                  <input type="text" id='settings_endpoint' />
-                </p>
-                <p>
-                  <label for='settings_token'>token:</label>
-                  <input type="text" id='settings_token' />
-                </p>
-                <p>
-                  <label for='settings_appid'>appid:</label>
-                  <input type="text" id='settings_appid' />
-                </p>
-                <p>
-                  <label for='settings_userid'>userid:</label>
-                  <input type="text" id='settings_userid' />
-                </p>
-                <p>Jira设置:</p>
-                <p>项目id : sow1填 11205， sow2填 11206</p>
-                <p>
-                  <label for='settings_jira_projectid'>项目id:</label>
-                  <input type="text" id='settings_jira_projectid' />
-                </p>
-                <p>
-                  <label for='settings_jira_username'>帐号:</label>
-                  <input type="text" id='settings_jira_username' />
-                </p>
-                <p>
-                  <label for='settings_jira_password'>密码:</label>
-                  <input type="text" id='settings_jira_password' />
-                </p>
-                <div class="title poi showSettings">
-                  <a class="title_name ng-binding">保存 & 收起</a>
-                  <i class="web_wechat_up_icon"></i>
+              <!--END HD-->
+
+              <!-- ngIf: unreadMessageCount>10&&!bottomUnreadCount -->
+              <!-- ngIf: bottomUnreadCount -->
+
+              <!--BEGIN BD-->
+              <div jquery-scrollbar="" id="jqueryScrollbar" class="box_bd chat_bd scrollbar-dynamic " style="height: 576px;">
+                <div mm-repeat="message in chatContent" class="conversation">
+                  <div ng-style="{height:topHeight}" class="top-placeholder" style="height: 0px;"></div>
+                  <!-- ngRepeat: message in chatContent -->
+
+                  <div class="bottom-placeholder" style="height: 0px;"></div>
+                </div>
+                <div id="prerender" style="visibility: hidden;  position: absolute;  width: 100%;  top: 333px;  height: 0;  padding: 0 19px;  box-sizing: border-box;  margin-left: -19px;  overflow: hidden;"></div>
+              </div>
+              <!--END BD-->
+              <!--BEGIN FT-->
+              <div class="box_ft">
+                <div class="toolbar" id="tool_bar">
+                  <a class="web_wechat_add showSettings" href="javascript:;" title="工具按钮预留" style='float:right'></a>
+                  <!--
+                  <a class="titlebar_menuicon" href="javascript:;" title="工具按钮预留"></a>
+                  <a class="menuicon_volume_on" href="javascript:;" title="工具按钮预留"></a>
+                  <a class="menuicon_volume_mute" href="javascript:;" title="语音开关"></a>
+                  -->
+                  <a class="icon_schedule_repeat" id="scheduleBtn" href="javascript:;" title="定时任务"></a>
+                  <!-- <a mm-action-track="" track-type="['click']" track-opt="{'target':'截图'}" class="web_wechat_screencut ng-isolate-scope" ng-hide="noflash"
+                                ng-click="screenShot()" href="javascript:;" title="截屏"></a> -->
+                  <a id="selectFileBtn" class="web_wechat_pic js_fileupload webuploader-container" href="javascript:;" title="选择测试脚本">
+                  </a>
+                  <span id="selected-file">
+                    <span>
+                </div>
+                <div class="content">
+                  <pre id="editArea" class="flex edit_area" contenteditable="true"></pre>
+                </div>
+
+                <div class="action">
+                  <a class="btn btn_send">发送</a>
+                </div>
+              </div>
+              <div id="J_CatchDrop" class="catch-drop-area"></div>
+            </div>
+          </div>
+          <div class="split-pane-divider" id="my-divider"></div>
+          <div class="split-pane-component" id="right-component">
+            <div class="split-pane horizontal-percent">
+              <div class="split-pane-component" id="detail-component">
+                <div class="title-bar">
+                  详情 - 单击对话气泡查看详情，右键更多操作
+                  <a class="icon_more_vert" href="javascript:;" title="工具按钮预留" style="float:right;width:24px;height:22px"></a>
+                </div>
+                <!-- Content goes here. -->
+                <div class="cw-inspectorview">
+                  <div class="cw-inspectorview-json">
+                    <h5>启动中...</h5>
+                  </div>
+                </div>
+              </div>
+              <div class="split-pane-divider" id="horizontal-divider2"></div>
+              <div class="split-pane-component" id="log-component">
+                <div class="title-bar">
+                  日志
+                  <a class="icon_more_vert" id='showLogViewCMBtn' href="javascript:;" title="更多" style="float:right;width:24px;height:22px"></a>
+                </div>
+                <!-- Content goes here. -->
+                <div class="cw-logview">
+
                 </div>
               </div>
             </div>
-
           </div>
-          <!--END HD-->
-
-          <!-- ngIf: unreadMessageCount>10&&!bottomUnreadCount -->
-          <!-- ngIf: bottomUnreadCount -->
-
-          <!--BEGIN BD-->
-          <div jquery-scrollbar="" id="jqueryScrollbar" class="box_bd chat_bd scrollbar-dynamic " style="height: 576px;">
-            <div mm-repeat="message in chatContent" data-height-calc="heightCalc" data-buffer-height="300" data-pre-calc="true" class="ng-scope">
-              <div ng-style="{height:topHeight}" class="top-placeholder ng-scope" style="height: 0px;"></div>
-              <!-- ngRepeat: message in chatContent -->
-
-              <div class="bottom-placeholder" style="height: 0px;"></div>
-            </div>
-            <div id="prerender" style="visibility: hidden;  position: absolute;  width: 100%;  top: 333px;  height: 0;  padding: 0 19px;  box-sizing: border-box;  margin-left: -19px;  overflow: hidden;"></div>
-          </div>
-          <!--END BD-->
-          <!--BEGIN FT-->
-          <div class="box_ft ng-scope">
-            <div class="toolbar" id="tool_bar">
-              <a class="web_wechat_tab_add" href="javascript:;" title="工具按钮预留"></a>
-              <a class="web_wechat_face" ng-click="showEmojiPanel($event)" href="javascript:;" title="表情预留"></a>
-              <!-- <a mm-action-track="" track-type="['click']" track-opt="{'target':'截图'}" class="web_wechat_screencut ng-isolate-scope" ng-hide="noflash"
-                                ng-click="screenShot()" href="javascript:;" title="截屏"></a> -->
-              <a id="selectFileBtn" class="web_wechat_pic js_fileupload ng-isolate-scope webuploader-container" href="javascript:;" title="选择测试脚本">
-              </a>
-              <span id="selected-file">
-                <span>
-            </div>
-            <div class="content ng-isolate-scope">
-              <pre id="editArea" class="flex edit_area ng-isolate-scope ng-valid ng-dirty" contenteditable="true"></pre>
-            </div>
-
-            <div class="action">
-              <a class="btn btn_send">发送</a>
-            </div>
-          </div>
-          <div id="J_CatchDrop" class="catch-drop-area"></div>
         </div>
-
       </div>
     </div>
   </div>
@@ -124,6 +167,12 @@
     <button id="load">load</button>
 -->
   <script>
+
+
+  </script>
+  <script>
+    $('div.split-pane').splitPane();
+
     const {
       openExternal,
       previewImg,
@@ -132,6 +181,12 @@
     } = require('./renderer');
 
   </script>
+  <!--   <script>
+    $(function() {
+      
+    });
+
+  </script> -->
 </body>
 
 </html>

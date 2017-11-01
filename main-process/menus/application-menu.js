@@ -33,6 +33,16 @@ let template = [{
     label: '全选',
     accelerator: 'CmdOrCtrl+A',
     role: 'selectall',
+  }, {
+    type: 'separator',
+  }, {
+    label: '设置',
+    accelerator: 'CmdOrCtrl+S',
+    click: function(item, focusedWindow) {
+      if (focusedWindow) {
+        focusedWindow.send('show-settings');
+      }
+    },
   }],
 }, {
   label: '查看',

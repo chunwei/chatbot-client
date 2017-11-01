@@ -82,7 +82,7 @@ ChatBot.prototype.think = function(sth) {
 };
 
 ChatBot.prototype.talk = function(sth) {
-  console.log(this.getId() + ' : ' + sth);
+  console.trace(this.getId() + ' : ' + sth);
   this.listeners.forEach(function(bot) { bot.heard(sth); });
 };
 ChatBot.prototype.talkTo = function(sb, sth) {

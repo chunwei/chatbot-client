@@ -36,8 +36,8 @@ function initialize() {
     // Create browser window
     win = new BrowserWindow({
       show: false,
-      width: 580,
-      height: screenSize.height,
+      width: 1024,
+      height: 800, //screenSize.height,
       icon: path.join(__dirname, 'img/icon.png'),
     });
     win.on('ready-to-show', function() {
