@@ -129,6 +129,51 @@ let template = [{
     },
   }],
 }, {
+  label: '调试',
+  submenu: [{
+    label: '开启调试',
+    accelerator: 'CmdOrCtrl+F5',
+    click: function(item, win) {
+      win.send('start-debugger');
+    }
+  }, {
+    label: '结束调试',
+    accelerator: 'Shift+F5',
+    click: function(item, win) {
+      win.send('stop-debugger');
+    }
+  }, {
+    type: 'separator',
+  }, {
+    label: '暂停',
+    accelerator: 'F6',
+    click: function(item, win) {
+      win.send('pause-debugger');
+    }
+  },
+  {
+    label: '继续',
+    accelerator: 'F5',
+    click: function(item, win) {
+      win.send('continue-debugger');
+    }
+  },
+  {
+    label: '逐句调试',
+    accelerator: 'F10',
+    click: function(item, win) {
+      win.send('step-over-debugger');
+    }
+  },
+  {
+    label: '重启',
+    accelerator: 'CmdOrCtrl+Shift+F5',
+    click: function(item, win) {
+      win.send('restart-debugger');
+    }
+  }],
+},
+{
   label: '帮助',
   role: 'help',
   submenu: [{

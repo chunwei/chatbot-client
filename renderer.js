@@ -63,6 +63,28 @@ ipcRenderer.on('selected-files', function(event, files) {
   //tmgr.setTask(task);
   //tmgr.start();
 });
+
+function simulateMouseEvent(elm, etype) {
+  var event = new MouseEvent(etype, {
+    view: window,
+    bubbles: true,
+    cancelable: true
+  });
+  elm.dispatchEvent(event);
+}
+ipcRenderer.on('start-debugger', function() {
+  ipcRenderer.send('open-file-dialog');
+});
+['stop', 'restart', 'continue', 'step-over', 'pause'].forEach(
+  (action) => {
+    ipcRenderer.on(action + '-debugger', function() {
+      let elm = debugActionsWidget.querySelector('.debug-action.' + action);
+      simulateMouseEvent(elm, 'mouseup');
+    });
+  }
+);
+
+
 ipcRenderer.on('show-settings', function() {
   showSettings();
 });
@@ -149,16 +171,21 @@ function testFiles1by1(files) {
   testOneFile(0);
 }
 
-function startTask(alllines, voiceopen) {
+function startTask(taskInfo) {
   let task = new TaskChatTester();
-  task.setMessages(alllines);
+  task.setTaskInfo(taskInfo);
+  //task.setMessages(taskInfo.alllines);
+  //task.setBreakPoints(taskInfo.breakpoints)
   task.step = function() {
     let self = task;
     return new Promise((resolve, reject) => {
       let msg = self.messages[self.curStep];
-      //console.log(msg);
-      //resolve(1 + self.curStep);
-      sendTestMessage.call({ fromIndex: self.curStep }, msg, resolve, voiceopen);
+      let voiceopen = taskInfo.voices[self.curStep];
+      if (!msg || self.curStep < 0 || self.curStep > self.messages.length - 1) {
+        reject('数组越界或msg为空');
+      } else {
+        sendTestMessage.call({ fromIndex: self.curStep }, msg, resolve, voiceopen);
+      }
     });
   };
   tmgr.setTask(task);
@@ -167,7 +194,7 @@ function startTask(alllines, voiceopen) {
 
 function startBatchTest(files) {
   console.log(files);
-  let alllines = [];
+  let taskInfo = { lines: [], breakpoints: [], voices: [] };
   let voiceopen = false;
   let promises = files.map(file => {
     return readLine(file);
@@ -176,13 +203,16 @@ function startBatchTest(files) {
     console.log(arrOfRes);
     //合并成一个arr, 同时判断是否开启语音        
     arrOfRes.forEach(res => {
-      alllines = alllines.concat(res.lines);
+      ['lines', 'breakpoints', 'voices'].forEach(p => {
+        taskInfo[p] = taskInfo[p].concat(res[p]);
+      });
+
       //只最后载入的文件开启了就开启
       voiceopen = voiceopen || res.voiceopen;
     });
     //让任务管理器来接管
     //$chatTester.doTest(alllines, voiceopen);
-    startTask(alllines, voiceopen);
+    startTask(taskInfo);
   }).catch(function(reason) {
     console.error(reason);
   });
@@ -190,23 +220,42 @@ function startBatchTest(files) {
 
 function readLine(file) {
   return new Promise((resolve, reject) => {
+    let lines = [];
+    let voices = [];
+    let breakpoints = [];
+    let voiceopen = false;
+    let breakpoint = false;
+
     const rl = readline.createInterface({
       input: fs.createReadStream(file)
     });
-    let lines = [];
-    let voiceopen = false;
+
     rl.on('line', (line) => {
       let row = line.trim();
+      //跳过空行
       if (row.length > 0) {
-        switch (row) {
-          case '#voice-open':
-            voiceopen = true;
-            break;
-          case '#voice-close':
-            voiceopen = false;
-            break;
-          default:
-            lines.push(row);
+        //注释和指令
+        if (row.indexOf('#') == 0) {
+          switch (row) {
+            case '#voice-open':
+              voiceopen = true;
+              break;
+            case '#voice-close':
+              voiceopen = false;
+              break;
+            case '#breakpoint':
+            case '#debugger':
+            case '#pause':
+              breakpoint = true;
+              break;
+            default:
+              //comments
+          }
+        } else {
+          lines.push(row);
+          voices.push(voiceopen);
+          breakpoints.push(breakpoint);
+          breakpoint = false;
         }
       }
       console.log(`Line from file: ${line}`);
@@ -214,6 +263,8 @@ function readLine(file) {
     rl.on('close', () => {
       resolve({
         lines: lines,
+        breakpoints: breakpoints,
+        voices: voices,
         voiceopen: voiceopen
       });
     });

@@ -7,6 +7,8 @@ let pauseBtn = debugActionsWidget.querySelector('.debug-action.pause');
 let stopBtn = debugActionsWidget.querySelector('.debug-action.stop');
 let continueBtn = debugActionsWidget.querySelector('.debug-action.continue');
 let stepoverBtn = debugActionsWidget.querySelector('.debug-action.step-over');
+let repeatBtn = debugActionsWidget.querySelector('.debug-action.repeat');
+let norepeatBtn = debugActionsWidget.querySelector('.debug-action.norepeat');
 let isDraging = false;
 let prePoint = { top: 0, left: 0 };
 
@@ -14,10 +16,22 @@ let tmgr = new TaskManager( /* task */ );
 tmgr.on('finish', function(event) {
   disableBtn(pauseBtn);
   disableBtn(stopBtn);
+  disableBtn(continueBtn);
+  disableBtn(stepoverBtn);
 });
 tmgr.on('changetask', function(event) {
   enableBtn(pauseBtn);
   enableBtn(stopBtn);
+});
+tmgr.on('restart', function(event) {
+  enableBtn(pauseBtn);
+  enableBtn(continueBtn);
+  enableBtn(stopBtn);
+});
+tmgr.on('breakpoint', function(event) {
+  enableBtn(stepoverBtn);
+  enableBtn(continueBtn);
+  switchBtns(pauseBtn, continueBtn);
 });
 
 debugActionsWidget.addEventListener('mousedown', function(event) {
@@ -91,7 +105,7 @@ debugActionsWidget.addEventListener('mouseup', function(event) {
     event.target.parentElement.classList.remove('active');
     //actions    
 
-    let action = event.target.className.match(/continue|pause|restart|stop|step-over|step-into|step-out/g);
+    let action = event.target.className.match(/continue|pause|restart|stop|step-over|step-into|step-out|repeat|norepeat/g);
     console.log('debug-action %s', action);
     action = action ? action[0] : '';
     switch (action) {
@@ -122,10 +136,14 @@ debugActionsWidget.addEventListener('mouseup', function(event) {
       case 'step-over':
         tmgr.stepover();
         break;
-        /*       case 'step-into':
-                break;
-              case 'step-out':
-                break; */
+      case 'repeat':
+        tmgr.setAutoRepeat(true);
+        switchBtns(repeatBtn, norepeatBtn);
+        break;
+      case 'norepeat':
+        tmgr.setAutoRepeat(false);
+        switchBtns(norepeatBtn, repeatBtn);
+        break;
     }
   }
 });

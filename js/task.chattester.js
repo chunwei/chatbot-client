@@ -5,21 +5,33 @@ class TaskChatTester extends Task {
     super();
     this.messages = [];
   }
+  setTaskInfo(taskInfo) {
+    this.taskInfo = taskInfo;
+    this.setMessages(taskInfo.lines);
+    this.setBreakPoints(taskInfo.breakpoints);
+  }
+  setBreakPoints(breakpoints) {
+    if (Array.isArray(breakpoints)) {
+      this.breakpoints = breakpoints;
+    } else {
+      console.warn('breakpoints should be an array');
+    }
+  }
   setMessages(messages) {
     if (Array.isArray(messages)) {
       this.messages = messages;
-      this.MaxStep = messages.length;
+      this.MaxStep = messages.length - 1;
     } else {
       console.warn('messages should be an array');
     }
   }
   prepare() {
-    console.time('pause clicked');
-    console.time('continue clicked');
-    for (let x = 0; x < 10; x++) {
-      console.time('step ' + x + ' start');
-      console.time('step ' + x + ' end');
-    }
+    /*     console.time('pause clicked');
+        console.time('continue clicked');
+        for (let x = 0; x < 10; x++) {
+          console.time('step ' + x + ' start');
+          console.time('step ' + x + ' end');
+        } */
   }
   send(channel, event, ...args) {
     if (this.taskManager && 'function' === typeof this.taskManager.recieve) {
@@ -33,23 +45,19 @@ class TaskChatTester extends Task {
 
     return new Promise((resolve, reject) => {
       resolve(1 + self.curStep);
-      // myR.sendTestMessage.call({ fromIndex: self.curStep }, msgs[self.curStep], resolve, playVoice);
     });
-    /*     return new Promise((rs, rj) => {
-          setTimeout(function() {
-            rs('TaskChatTester step ' + self.curStep + ' done');
-            self.curStep++;
-          }, 500);
-        }); */
   }
 
   AopStep() {
     let self = this;
-    console.timeEnd('step ' + this.curStep + ' start');
+    console.log('step ' + this.curStep + ' start');
     return this.step().then(function(d) {
       self.curStep = d; //已经+1
-      console.timeEnd('step ' + (self.curStep - 1) + ' end');
+      console.log('step ' + (self.curStep - 1) + ' end');
       //检查是否需要停下来
+      return self.checkStopPoint();
+    }).catch(reason => {
+      console.error('some error happend when execute step ' + this.curStep + '. reason: ' + reason);
       return self.checkStopPoint();
     });
 
@@ -58,10 +66,10 @@ class TaskChatTester extends Task {
     clearInterval(this.job);
   }
   isAllDone() {
-    return this.curStep >= this.MaxStep;
+    return this.curStep > this.MaxStep;
   }
   isBreakPoint() {
-    return this.curStep == 7;
+    return this.breakpoints ? this.breakpoints[this.curStep] : false; //this.curStep == 7;
   }
   checkStopPoint() {
     //手动结束
@@ -88,8 +96,13 @@ class TaskChatTester extends Task {
     else if (this.stepover) {
       this.stopJob();
       this.stepover = false;
-      this.taskManager.pause();
-      this.send('stepover', 'task has been paused in stepover model');
+
+      if (this.isAllDone()) {
+        this.send('finish', 'task is finished');
+      } else {
+        this.taskManager.pause();
+        this.send('stepover', 'task has been paused in stepover model');
+      }
       return true;
     }
     //正常执行到结束
