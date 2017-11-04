@@ -1,6 +1,6 @@
 {
   "name": "chatbot",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "electronVersion": "1.8.1",
   "description": "A simple chatbot client app make with electron",
   "productName": "chatbot",
@@ -17,7 +17,8 @@
     "pack:win64": "electron-packager ./ --out ../dist --overwrite --asar --ignore=./appData --icon=./img/icon/icon.ico",
     "pack:win32": "electron-packager ./ --out ../dist --overwrite --ignore=./appData --icon=./img/icon/icon.ico --platform=win32 --arch=ia32",
     "pack:mac": "electron-packager ./ --out ../dist --overwrite --asar --ignore=./appData --icon=./img/icon/icon.ico --platform=darwin --arch=x64",
-    "winstall": "node winstall.js"
+    "winstall": "node winstall.js",
+    "build-dir": "electron-builder --dir"
   },
   "repository": "https://github.com/chunwei/chatbot",
   "bugs": {
@@ -45,11 +46,12 @@
     "eslint-config-google": "^0.9.1",
     "jasmine": "^2.8.0",
     "jasmine-spec-reporter": "^4.2.1",
+    "electron-builder": "^19.43.4",
     "npm-run-all": "^4.1.1"
   },
   "build": {
-    "appId": "chatbot",
-    "copyright": "RSVP",
+    "appId": "ai.rsvp.chatbot",
+    "copyright": "Copyright © 2017 RSVP",
     "productName": "chatbot",
     "win": {
       "icon": "img/icon/icon.ico"

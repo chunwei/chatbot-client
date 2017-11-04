@@ -4,6 +4,8 @@ let resultPromise = winstaller.createWindowsInstaller({
   appDirectory: '../dist/chatbot-win32-x64',
   outputDirectory: '../dist/installer/win32-x64',
   authors: 'luchunwei',
+  setupExe: 'chatbot-win32-setup.exe'
+
   //exe:'chatbot.exe'
 });
 
