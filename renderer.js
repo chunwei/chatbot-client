@@ -54,6 +54,14 @@ showLogViewCMBtn.addEventListener('click', function() {
   ipcRenderer.send('show-logview-context-menu');
 });
 
+ipcRenderer.on('update-message', function(event, text) {
+  if (text.indexOf('Error') > -1) {
+    console.error(text);
+  } else {
+    console.log(text);
+  }
+});
+
 ipcRenderer.on('selected-files', function(event, files) {
   debugActionsWidget.classList.remove('hidden');
   let filenames = files.map(file => path.parse(file).name);

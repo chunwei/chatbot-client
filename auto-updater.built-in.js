@@ -48,15 +48,15 @@ exports.updateMenu = function() {
     if (item.submenu) {
       item.submenu.items.forEach(function(item) {
         switch (item.key) {
-        case 'checkForUpdate':
-          item.visible = state === 'no-update'
-          break
-        case 'checkingForUpdate':
-          item.visible = state === 'checking'
-          break
-        case 'restartToUpdate':
-          item.visible = state === 'installed'
-          break
+          case 'checkForUpdate':
+            item.visible = state === 'no-update'
+            break
+          case 'checkingForUpdate':
+            item.visible = state === 'checking'
+            break
+          case 'restartToUpdate':
+            item.visible = state === 'installed'
+            break
         }
       })
     }
@@ -85,7 +85,7 @@ exports.removeShortcut = function(callback) {
  */
 function spawnUpdate(args, callback) {
   let updateExe =
-      path.resolve(path.dirname(process.execPath), '..', 'Update.exe')
+    path.resolve(path.dirname(process.execPath), '..', 'Update.exe')
   let stdout = ''
   let spawned = null
 

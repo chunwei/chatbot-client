@@ -40,4 +40,37 @@ function uuid(len, radix) {
   return uuid.join('');
 }
 
-module.exports.uuid = uuid;
+exports.uuid = uuid;
+
+exports.bytesToSize = function bytesToSize(bytes) {
+  if (bytes === 0) return '0 B';
+  let k = 1024;
+  let sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+  let i = Math.floor(Math.log(bytes) / Math.log(k));
+
+  return (bytes / Math.pow(k, i)).toPrecision(3) + ' ' + sizes[i];
+};
+
+exports.secondsFriendly = function secondsFriendly(seconds) {
+  let time = seconds + '秒';
+  if (seconds > 59) {
+    let second = parseInt(seconds % 60);
+    let min = parseInt(seconds / 60);
+    time = min + '分' + (second == 0 ? '' : second + '秒');
+
+    if (min > 59) {
+      min = parseInt(seconds / 60) % 60;
+      let hour = parseInt(seconds / 60 / 60);
+      time = hour + '小时';
+      if (min > 0) { time += (min + '分'); }
+      //else if (min == 0) { time += (second == 0 ? '' : '零'); }
+      //if (second > 0) { time += (second + '秒'); }
+      if (hour > 23) {
+        hour = parseInt(seconds / 60 / 60) % 24;
+        let day = parseInt(parseInt(seconds / 60 / 60) / 24);
+        time = day + '天' + hour + '小时'; // + min + '分' + second + '秒';
+      }
+    }
+  }
+  return time;
+};

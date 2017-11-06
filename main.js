@@ -7,7 +7,7 @@ const {
 const path = require('path');
 const glob = require('glob');
 const url = require('url');
-const autoUpdater = require('./auto-updater');
+const autoUpdater = require('./auto-updater.electron');
 
 const debug = /--debug/.test(process.argv[2]);
 
@@ -69,6 +69,7 @@ function initialize() {
 
   app.on('ready', function() {
     createWindow();
+    autoUpdater.setWin(win);
     autoUpdater.initialize();
   });
 

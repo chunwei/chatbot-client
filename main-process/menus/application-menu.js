@@ -4,6 +4,7 @@ const path = require('path');
 const BrowserWindow = electron.BrowserWindow;
 const Menu = electron.Menu;
 const app = electron.app;
+const autoUpdater = require('electron-updater').autoUpdater;
 
 let template = [{
   label: '编辑',
@@ -201,15 +202,21 @@ function addUpdateMenuItems(items, position) {
     label: `版本 ${version}`,
     enabled: false,
   }, {
-    label: '正在检查更新',
+    label: '正在检查更新...',
     enabled: false,
+    visible: false,
     key: 'checkingForUpdate',
   }, {
-    label: '检查更新',
+    label: '正在下载更新...',
+    enabled: false,
     visible: false,
+    key: 'downloadingUpdate',
+  }, {
+    label: '检查更新',
+    /*     visible: false, */
     key: 'checkForUpdate',
     click: function() {
-      require('electron').autoUpdater.checkForUpdates();
+      autoUpdater.checkForUpdates();
     },
   }, {
     label: '重启并安装更新',
@@ -217,7 +224,7 @@ function addUpdateMenuItems(items, position) {
     visible: false,
     key: 'restartToUpdate',
     click: function() {
-      require('electron').autoUpdater.quitAndInstall();
+      autoUpdater.quitAndInstall();
     },
   }];
 
