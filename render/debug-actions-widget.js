@@ -13,11 +13,17 @@ let isDraging = false;
 let prePoint = { top: 0, left: 0 };
 
 let tmgr = new TaskManager( /* task */ );
+tmgr.on('stop', function(event) {
+  debugActionsWidget.classList.add('hidden');
+})
 tmgr.on('finish', function(event) {
   disableBtn(pauseBtn);
   disableBtn(stopBtn);
   disableBtn(continueBtn);
   disableBtn(stepoverBtn);
+  if (!tmgr.autorepeat) {
+    debugActionsWidget.classList.add('hidden');
+  }
 });
 tmgr.on('changetask', function(event) {
   enableBtn(pauseBtn);

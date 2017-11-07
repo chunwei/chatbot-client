@@ -5,7 +5,7 @@ class TaskManager {
       this.task = task /* || function task() { return Promise.resolve(console.log('empty function')); } */ ;
       this.task.setManager(this);
     } else {
-      console.warn('create a TaskManager instance but without a task being set!');
+      //console.warn('create a TaskManager instance but without a task being set!');
     }
     this.autorepeat = false;
     this.state = 'pending';

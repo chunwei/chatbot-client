@@ -24,13 +24,13 @@ exports.initialize = function() {
   autoUpdater.on('checking-for-update', function() {
     state = 'checking';
     exports.updateMenu();
-    sendStatusToWindow('Checking for update...');
+    sendStatusToWindow('正在检查更新...');
   });
 
   autoUpdater.on('update-available', function(updateInfo) {
     state = 'checking';
     exports.updateMenu();
-    sendStatusToWindow('有可用更新，最新版本号 ' + updateInfo.version);
+    sendStatusToWindow('有可用更新，新版版本号 ' + updateInfo.version);
   });
 
   autoUpdater.on('download-progress', (progressObj) => {

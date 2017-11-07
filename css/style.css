@@ -20,7 +20,7 @@
   /* Same as left component width */
   margin-left: 0px;
   /* Same as divider width */
-  min-width: 200px;
+  /*   min-width: 200px; */
   background-color: #1e1e1e;
 }
 
@@ -330,6 +330,7 @@ pre#editArea:focus {
 
 .chat .box_ft .toolbar {
   padding: 5px 0px;
+  text-align: left;
 }
 
 .icon_more_vert {

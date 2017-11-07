@@ -40,9 +40,9 @@ function uuid(len, radix) {
   return uuid.join('');
 }
 
-exports.uuid = uuid;
+module.exports.uuid = uuid;
 
-exports.bytesToSize = function bytesToSize(bytes) {
+module.exports.bytesToSize = function bytesToSize(bytes) {
   if (bytes === 0) return '0 B';
   let k = 1024;
   let sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
@@ -51,7 +51,7 @@ exports.bytesToSize = function bytesToSize(bytes) {
   return (bytes / Math.pow(k, i)).toPrecision(3) + ' ' + sizes[i];
 };
 
-exports.secondsFriendly = function secondsFriendly(seconds) {
+module.exports.secondsFriendly = function secondsFriendly(seconds) {
   let time = seconds + '秒';
   if (seconds > 59) {
     let second = parseInt(seconds % 60);

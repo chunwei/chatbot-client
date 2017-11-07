@@ -37,16 +37,35 @@ var scrollContent = document.querySelector('#jqueryScrollbar');
 const btn_send = document.querySelector('.btn_send');
 const editArea = document.querySelector('#editArea');
 
+const topLevelLRSplitPane = $('div.split-pane.fixed-left');
+const showRightPanel = document.getElementById('showRightPanel');
+const hideRightPanel = document.getElementById('hideRightPanel');
+showRightPanel.addEventListener('click', function() {
+  topLevelLRSplitPane.splitPane('lastComponentSize', 0);
+  topLevelLRSplitPane.splitPane('lastComponentSize', parseInt(topLevelLRSplitPane.data('rightsize')));
+  showRightPanel.classList.add('hidden');
+});
+
+
+
+
+hideRightPanel.addEventListener('click', function() {
+  topLevelLRSplitPane.data('rightsize', topLevelLRSplitPane.children('.split-pane-component:last').css('left'));
+  topLevelLRSplitPane.splitPane('lastComponentSize', 0);
+
+  showRightPanel.classList.remove('hidden');
+});
+
 const selectFileBtn = document.getElementById('selectFileBtn');
 
 selectFileBtn.addEventListener('click', function() {
   ipcRenderer.send('open-file-dialog');
 });
-const scheduleBtn = document.getElementById('scheduleBtn');
+/* const scheduleBtn = document.getElementById('scheduleBtn');
 
 scheduleBtn.addEventListener('click', function() {
   ipcRenderer.send('open-information-dialog');
-});
+}); */
 
 const showLogViewCMBtn = document.getElementById('showLogViewCMBtn');
 
@@ -62,11 +81,11 @@ ipcRenderer.on('update-message', function(event, text) {
   }
 });
 
-ipcRenderer.on('selected-files', function(event, files) {
+ipcRenderer.on('selected-files', function(event, files, launchAndDebug) {
   debugActionsWidget.classList.remove('hidden');
   let filenames = files.map(file => path.parse(file).name);
   document.getElementById('selected-file').innerHTML = `脚本: ${filenames}`;
-  startBatchTest(files);
+  startBatchTest(files, launchAndDebug);
   //$chatTester.testFiles1by1(files);
   //tmgr.setTask(task);
   //tmgr.start();
@@ -80,8 +99,10 @@ function simulateMouseEvent(elm, etype) {
   });
   elm.dispatchEvent(event);
 }
+
 ipcRenderer.on('start-debugger', function() {
-  ipcRenderer.send('open-file-dialog');
+  console.log('start-debugger');
+  ipcRenderer.send('open-file-dialog', true);
 });
 ['stop', 'restart', 'continue', 'step-over', 'pause'].forEach(
   (action) => {
@@ -200,7 +221,7 @@ function startTask(taskInfo) {
   tmgr.start();
 }
 
-function startBatchTest(files) {
+function startBatchTest(files, launchAndDebug) {
   console.log(files);
   let taskInfo = { lines: [], breakpoints: [], voices: [] };
   let voiceopen = false;
@@ -220,6 +241,11 @@ function startBatchTest(files) {
     });
     //让任务管理器来接管
     //$chatTester.doTest(alllines, voiceopen);
+
+    if (launchAndDebug) {
+      taskInfo.breakpoints[1] = true;
+    }
+
     startTask(taskInfo);
   }).catch(function(reason) {
     console.error(reason);

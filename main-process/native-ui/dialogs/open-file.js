@@ -1,7 +1,7 @@
 const ipc = require('electron').ipcMain
 const dialog = require('electron').dialog
 
-ipc.on('open-file-dialog', function(event) {
+ipc.on('open-file-dialog', function(event, launchAndDebug) {
   dialog.showOpenDialog({
     properties: ['openFile', 'multiSelections'],
     filters: [{
@@ -13,6 +13,6 @@ ipc.on('open-file-dialog', function(event) {
       extensions: ['*'],
     }, ],
   }, function(files) {
-    if (files) event.sender.send('selected-files', files)
+    if (files) event.sender.send('selected-files', files, launchAndDebug);
   })
 })

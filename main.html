@@ -21,8 +21,8 @@
 </head>
 
 <body class='loaded'>
-  <div class="main">
-    <div class="main_inner">
+  <div class="main vs-dark">
+    <div class="main_inner monaco-workbench">
       <div class="contentView" style="height:100%;">
         <div class="split-pane fixed-left">
           <div class="split-pane-component" id="left-component">
@@ -37,7 +37,7 @@
                 <!--<a class="ext web_wechat_addfriend" href="javascript:;" ng-click="showProfile($event)" ng-show="!currentContact.isRoomContact()" title="Profile"></a>-->
                 <div id="chatRoomMembersWrap"></div>
                 <div class="title_wrap">
-                  <a class="web_wechat_add showSettings" href="javascript:;" title="工具按钮预留" style="position: absolute;right: 10px;top: 0;"></a>
+                  <a class="split-editor-action hidden" id="showRightPanel" href="javascript:;" title="打开详情面板" style="position: absolute;right: 10px;top: 0;background-size:24px"></a>
                   <div class="title poi showSettings" style='display:none' id='showSettingBtn'>
                     <a class="title_name ng-binding">设置</a>
                     <!-- ngIf: currentContact.MemberList.length -->
@@ -100,21 +100,44 @@
               <!--END BD-->
               <!--BEGIN FT-->
               <div class="box_ft">
-                <div class="toolbar" id="tool_bar">
+                <div class="activitybar">
+                  <div class="activity-bar-container">
+                    <div class="toolbar monaco-action-bar" id="tool_bar">
+                      <ul class="actions-container" role="toolbar">
+                        <li class="action-item">
+                          <a id="selectFileBtn" class="action-label explore" style="background-color: #888;" href="javascript:;" title="选择测试脚本"></a>
+                        </li>
+                        <li class="action-item">
+                          <span id="selected-file" class="action-label">脚本文件
+                            <span>
+                        </li>
+                      </ul>
+                    </div>
+                    <div class="toolbar monaco-action-bar">
+                      <ul class="actions-container" role="toolbar" aria-label="全局动作">
+                        <li class="action-item showSettings" role="button" tabindex="0" title="配置">
+                          <a class="action-label update-activity" style="background-color: #888;"></a>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                <!--
+                <div class="toolbar monaco-action-bar" id="tool_bar">
                   <a class="web_wechat_add showSettings" href="javascript:;" title="工具按钮预留" style='float:right'></a>
-                  <!--
+                  
                   <a class="titlebar_menuicon" href="javascript:;" title="工具按钮预留"></a>
                   <a class="menuicon_volume_on" href="javascript:;" title="工具按钮预留"></a>
                   <a class="menuicon_volume_mute" href="javascript:;" title="语音开关"></a>
-                  -->
+                  
                   <a class="icon_schedule_repeat" id="scheduleBtn" href="javascript:;" title="定时任务"></a>
-                  <!-- <a mm-action-track="" track-type="['click']" track-opt="{'target':'截图'}" class="web_wechat_screencut ng-isolate-scope" ng-hide="noflash"
-                                ng-click="screenShot()" href="javascript:;" title="截屏"></a> -->
-                  <a id="selectFileBtn" class="web_wechat_pic js_fileupload webuploader-container" href="javascript:;" title="选择测试脚本">
+                 
+                   <a mm-action-track="" track-type="['click']" track-opt="{'target':'截图'}" class="web_wechat_screencut ng-isolate-scope" ng-hide="noflash"
+                                ng-click="screenShot()" href="javascript:;" title="截屏"></a> 
+                   <a id="selectFileBtn" class="web_wechat_pic js_fileupload webuploader-container" href="javascript:;" title="选择测试脚本">
                   </a>
-                  <span id="selected-file">
-                    <span>
                 </div>
+                -->
                 <div class="content">
                   <pre id="editArea" class="flex edit_area" contenteditable="true"></pre>
                 </div>
@@ -131,8 +154,27 @@
             <div class="split-pane horizontal-percent">
               <div class="split-pane-component" id="detail-component">
                 <div class="title-bar">
-                  详情 - 单击对话气泡查看详情，右键更多操作
-                  <a class="icon_more_vert" href="javascript:;" title="工具按钮预留" style="float:right;width:24px;height:22px"></a>
+                  <div class="activitybar">
+                    <div class="activity-bar-container">
+                      <div class="monaco-action-bar">
+                        <ul class="actions-container" role="toolbar">
+                          <li class="action-item">
+                            <span class="action-label" style="padding-left:0;font-size:1em;">
+                              详情 - 单击对话气泡查看详情，右键更多操作
+                              <span>
+                          </li>
+                        </ul>
+                      </div>
+                      <div class="monaco-action-bar">
+                        <ul class="actions-container" role="toolbar" aria-label="全局动作">
+                          <li class="action-item" id="hideRightPanel" role="button" tabindex="0" title="关闭面板">
+                            <a class="action-label hide-panel-action"></a>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- <a class="icon_more_vert" href="javascript:;" title="工具按钮预留" style="float:right;width:24px;height:22px"></a> -->
                 </div>
                 <!-- Content goes here. -->
                 <div class="cw-inspectorview">
@@ -144,8 +186,27 @@
               <div class="split-pane-divider" id="horizontal-divider2"></div>
               <div class="split-pane-component" id="log-component">
                 <div class="title-bar">
-                  日志
-                  <a class="icon_more_vert" id='showLogViewCMBtn' href="javascript:;" title="更多" style="float:right;width:24px;height:22px"></a>
+                  <div class="activitybar">
+                    <div class="activity-bar-container">
+                      <div class="monaco-action-bar">
+                        <ul class="actions-container" role="toolbar">
+                          <li class="action-item">
+                            <span class="action-label" style="padding-left:0;font-size:1em;">
+                              日志
+                              <span>
+                          </li>
+                        </ul>
+                      </div>
+                      <div class="monaco-action-bar">
+                        <ul class="actions-container" role="toolbar" aria-label="全局动作">
+                          <li class="action-item" role="button" tabindex="0" title="更多">
+                            <a id='showLogViewCMBtn' class="action-label toolbar-toggle-more"></a>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                  <!--   <a class="icon_more_vert"  href="javascript:;" title="更多" style="float:right;width:24px;height:22px"></a> -->
                 </div>
                 <!-- Content goes here. -->
                 <div class="cw-logview">
