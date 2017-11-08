@@ -1,5 +1,7 @@
 # ChatBot 桌面版聊天测试程式
 
+[![Build Status](https://travis-ci.org/chunwei/chatbot-client.svg?branch=master)](https://travis-ci.org/chunwei/chatbot-client)
+
 ## 初始化
 `npm install`
 
