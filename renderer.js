@@ -41,18 +41,25 @@ const topLevelLRSplitPane = $('div.split-pane.fixed-left');
 const showRightPanel = document.getElementById('showRightPanel');
 const hideRightPanel = document.getElementById('hideRightPanel');
 showRightPanel.addEventListener('click', function() {
-  topLevelLRSplitPane.splitPane('lastComponentSize', 0);
+  let splitPaneComponent = topLevelLRSplitPane.children('.split-pane-component');
+  let right = topLevelLRSplitPane.children('.split-pane-component:last');
+  splitPaneComponent.addClass('ease');
   topLevelLRSplitPane.splitPane('lastComponentSize', parseInt(topLevelLRSplitPane.data('rightsize')));
+  right.one('transitionend', function() {
+    splitPaneComponent.removeClass('ease');
+  });
   showRightPanel.classList.add('hidden');
 });
 
-
-
-
 hideRightPanel.addEventListener('click', function() {
-  topLevelLRSplitPane.data('rightsize', topLevelLRSplitPane.children('.split-pane-component:last').css('left'));
+  let splitPaneComponent = topLevelLRSplitPane.children('.split-pane-component');
+  let right = topLevelLRSplitPane.children('.split-pane-component:last');
+  topLevelLRSplitPane.data('rightsize', right.css('width'));
+  splitPaneComponent.addClass('ease');
   topLevelLRSplitPane.splitPane('lastComponentSize', 0);
-
+  right.one('transitionend', function() {
+    splitPaneComponent.removeClass('ease');
+  });
   showRightPanel.classList.remove('hidden');
 });
 

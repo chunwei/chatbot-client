@@ -2,7 +2,7 @@
   "name": "chatbot",
   "version": "1.0.6",
   "electronVersion": "1.8.1",
-  "description": "A simple chatbot client app make with electron",
+  "description": "A simple chatbot client",
   "productName": "chatbot",
   "main": "main.js",
   "private": true,
@@ -18,10 +18,14 @@
     "pack:win32": "electron-packager ./ --out ../dist --overwrite --ignore=./appData --icon=./img/icon/icon.ico --platform=win32 --arch=ia32",
     "pack:mac": "electron-packager ./ --out ../dist --overwrite --asar --ignore=./appData --icon=./img/icon/icon.ico --platform=darwin --arch=x64",
     "winstall": "node winstall.js",
+    "release": "electron-builder",
     "build-dir": "electron-builder --dir",
     "publish": "electron-builder --publish always"
   },
-  "repository": "https://github.com/chunwei/chatbot-client",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chunwei/chatbot-client.git"
+  },
   "bugs": {
     "url": "https://github.com/chunwei/chatbot-client/issues"
   },
@@ -44,7 +48,7 @@
   "devDependencies": {
     "devtron": "^1.4.0",
     "electron": "^1.8.1",
-    "electron-builder": "^19.45.0",
+    "electron-builder": "^19.45.4",
     "electron-packager": "^9.1.0",
     "electron-winstaller": "^2.6.3",
     "eslint": "^4.9.0",
@@ -57,15 +61,61 @@
     "appId": "ai.rsvp.chatbot",
     "copyright": "Copyright © 2017 RSVP",
     "productName": "chatbot",
-    "publish": [{ "provider": "generic", "url": "http://www.faxiaobot.cn/chatbot" }],
+    "directories": {
+      "buildResources": "build",
+      "output": "dist"
+    },
+    "nsis": {
+      "artifactName": "${productName}-${os}-${arch}-setup-${version}.${ext}"
+    },
+    "dmg": {
+      "contents": [
+      {
+        "x": 410,
+        "y": 150,
+        "type": "link",
+        "path": "/Applications"
+      },
+      {
+        "x": 130,
+        "y": 150,
+        "type": "file"
+      }]
+    },
+    "mac": {
+      "category": "public.app-category.developer-tools",
+      "target": [
+        "zip",
+        "dmg"
+      ],
+      "publish": [
+      {
+        "provider": "generic",
+        "url": "http://www.faxiaobot.cn/chatbot/updates/latest/mac/"
+      }]
+    },
     "win": {
-      "icon": "img/icon/icon.ico",
       "target": [
       {
         "target": "nsis",
-        "arch": [
-          "x64"
-        ]
+        "arch": ["x64", "ia32"]
+      }],
+      "publish": [
+      {
+        "provider": "generic",
+        "url": "http://www.faxiaobot.cn/chatbot/updates/latest/win/"
+      }]
+    },
+    "linux": {
+      "category": "Tools",
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "publish": [
+      {
+        "provider": "generic",
+        "url": "http://www.faxiaobot.cn/chatbot/updates/latest/linux/"
       }]
     }
   }
