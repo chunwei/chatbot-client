@@ -107,7 +107,7 @@
       }]
     },
     "linux": {
-      "category": "Tools",
+      "category": "Development",
       "target": [
         "AppImage",
         "deb"
